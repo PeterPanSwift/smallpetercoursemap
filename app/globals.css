@@ -149,9 +149,6 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
 .primary-button.compact { min-height: 48px; padding: 0 20px; }
 .text-link { color: var(--ink); font-size: 14px; font-weight: 800; text-decoration: none; }
 .text-link span { color: var(--coral); display: inline-block; margin-left: 5px; }
-.mini-stats { display: flex; gap: 26px; margin-top: 38px; }
-.mini-stats span { color: var(--muted); font-size: 12px; }
-.mini-stats strong { color: var(--ink); font-family: var(--font-nunito); font-size: 17px; margin-right: 4px; }
 
 .hero-visual { min-height: 540px; position: relative; }
 .hero-visual::before {
@@ -388,7 +385,6 @@ footer p { color: #bcb7c9; font-size: 13px; margin: 5px 0 0; }
   .hero-copy { margin: 0 auto; max-width: 700px; }
   .eyebrow, .hero-buttons { justify-content: center; }
   .hero-description { margin-left: auto; margin-right: auto; }
-  .mini-stats { justify-content: center; }
   .hero-visual { margin: 0 auto; max-width: 590px; min-height: 550px; width: 100%; }
   footer { grid-template-columns: auto 1fr; }
   footer .primary-button { grid-column: 1 / -1; justify-self: start; }
@@ -406,7 +402,6 @@ footer p { color: #bcb7c9; font-size: 13px; margin: 5px 0 0; }
   .hero-visual { min-height: 410px; }
   .code-chip { display: none; }
   .speech-bubble { bottom: 4%; right: 1%; }
-  .mini-stats { gap: 14px; }
   .map-section { padding: 75px 12px 80px; }
   .map-shell { border-radius: 24px; }
   .map-toolbar { align-items: flex-start; gap: 14px; padding: 19px; }

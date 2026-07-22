@@ -534,9 +534,6 @@ export default function Home() {
             </button>
             <a className="text-link" href="#course-map">看看課程地圖 <span aria-hidden="true">↓</span></a>
           </div>
-          <div className="mini-stats">
-            <span><strong>自由編輯角色關卡</strong></span>
-          </div>
         </div>
         <div className="hero-visual" aria-label={`學習夥伴${characterName}`}>
           <div className="sparkle sparkle-one">✦</div>
