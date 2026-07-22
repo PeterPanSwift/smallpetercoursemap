@@ -24,6 +24,8 @@ const defaultTopics: Topic[] = [
 ];
 
 const defaultCourseTitle = "SwiftUI 入門冒險";
+const defaultCharacterName = "小彼";
+const defaultCharacterImage = "/fox.jpg";
 
 const xPositions = [22, 50, 78, 58, 25, 44, 76, 57, 24, 50];
 const nodeMotifs = ["✦", "♡", "☁", "✿", "☀", "♫", "★", "☺", "◇", "❋"];
@@ -83,6 +85,39 @@ function loadCanvasImage(source: string) {
   });
 }
 
+async function createCharacterImage(file: File) {
+  if (!file.type.startsWith("image/")) throw new Error("請選擇圖片檔案。");
+  if (file.size > 10 * 1024 * 1024) throw new Error("圖片請小於 10 MB。");
+
+  const source = URL.createObjectURL(file);
+  try {
+    const image = await loadCanvasImage(source);
+    const cropSize = Math.min(image.naturalWidth, image.naturalHeight);
+    if (!cropSize) throw new Error("無法讀取這張圖片。");
+    const canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 512;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("無法處理這張圖片。");
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, 512, 512);
+    context.drawImage(
+      image,
+      (image.naturalWidth - cropSize) / 2,
+      (image.naturalHeight - cropSize) / 2,
+      cropSize,
+      cropSize,
+      0,
+      0,
+      512,
+      512,
+    );
+    return canvas.toDataURL("image/jpeg", 0.86);
+  } finally {
+    URL.revokeObjectURL(source);
+  }
+}
+
 function topicsFromLines(text: string, previousTopics: Topic[]): Topic[] {
   return text
     .split(/\r?\n/)
@@ -99,6 +134,11 @@ export default function Home() {
   const [courseTitle, setCourseTitle] = useState(defaultCourseTitle);
   const [draftTopics, setDraftTopics] = useState<Topic[]>(defaultTopics);
   const [draftCourseTitle, setDraftCourseTitle] = useState(defaultCourseTitle);
+  const [characterName, setCharacterName] = useState(defaultCharacterName);
+  const [characterImage, setCharacterImage] = useState(defaultCharacterImage);
+  const [draftCharacterName, setDraftCharacterName] = useState(defaultCharacterName);
+  const [draftCharacterImage, setDraftCharacterImage] = useState(defaultCharacterImage);
+  const [characterImageError, setCharacterImageError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [journeyTarget, setJourneyTarget] = useState<number | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -117,6 +157,8 @@ export default function Home() {
     try {
       const saved = window.localStorage.getItem("swiftui-course-map-topics");
       const savedTitle = window.localStorage.getItem("course-map-title");
+      const savedCharacterName = window.localStorage.getItem("course-map-character-name");
+      const savedCharacterImage = window.localStorage.getItem("course-map-character-image");
       if (saved) {
         const parsed = JSON.parse(saved) as Topic[];
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -124,6 +166,8 @@ export default function Home() {
         }
       }
       if (savedTitle?.trim()) setCourseTitle(savedTitle.trim());
+      if (savedCharacterName?.trim()) setCharacterName(savedCharacterName.trim());
+      if (savedCharacterImage?.startsWith("data:image/")) setCharacterImage(savedCharacterImage);
     } catch {
       // If saved data is invalid, the friendly starter curriculum remains available.
     } finally {
@@ -133,9 +177,19 @@ export default function Home() {
 
   useEffect(() => {
     if (!isHydrated) return;
-    window.localStorage.setItem("swiftui-course-map-topics", JSON.stringify(topics));
-    window.localStorage.setItem("course-map-title", courseTitle);
-  }, [courseTitle, isHydrated, topics]);
+    try {
+      window.localStorage.setItem("swiftui-course-map-topics", JSON.stringify(topics));
+      window.localStorage.setItem("course-map-title", courseTitle);
+      window.localStorage.setItem("course-map-character-name", characterName);
+      if (characterImage.startsWith("data:image/")) {
+        window.localStorage.setItem("course-map-character-image", characterImage);
+      } else {
+        window.localStorage.removeItem("course-map-character-image");
+      }
+    } catch {
+      // The current session still works if browser storage is unavailable.
+    }
+  }, [characterImage, characterName, courseTitle, isHydrated, topics]);
 
   const updateFoxPosition = useCallback(() => {
     const map = mapRef.current;
@@ -195,6 +249,9 @@ export default function Home() {
     const copies = topics.map((topic) => ({ ...topic }));
     setDraftTopics(copies);
     setDraftCourseTitle(courseTitle);
+    setDraftCharacterName(characterName);
+    setDraftCharacterImage(characterImage);
+    setCharacterImageError("");
     setBulkText(copies.map((topic) => topic.title).join("\n"));
     setEditorMode("list");
     setIsEditorOpen(true);
@@ -232,6 +289,16 @@ export default function Home() {
     ]);
   }
 
+  async function updateDraftCharacterImage(file?: File) {
+    if (!file) return;
+    setCharacterImageError("");
+    try {
+      setDraftCharacterImage(await createCharacterImage(file));
+    } catch (error) {
+      setCharacterImageError(error instanceof Error ? error.message : "圖片處理失敗，請換一張再試。");
+    }
+  }
+
   function saveDraft() {
     const sourceTopics = editorMode === "bulk" ? topicsFromLines(bulkText, draftTopics) : draftTopics;
     const cleaned = sourceTopics
@@ -240,6 +307,8 @@ export default function Home() {
     if (cleaned.length === 0) return;
     setTopics(cleaned);
     setCourseTitle(draftCourseTitle.trim() || "我的學習冒險");
+    setCharacterName(draftCharacterName.trim() || defaultCharacterName);
+    setCharacterImage(draftCharacterImage);
     setCurrentIndex(0);
     setJourneyTarget(null);
     setIsEditorOpen(false);
@@ -285,7 +354,7 @@ export default function Home() {
       context.textAlign = "left";
       context.fillStyle = "#8175d8";
       context.font = "900 18px Nunito, 'Noto Sans TC', sans-serif";
-      context.fillText("彼學島 · 和小彼一起探索", 154, 65);
+      context.fillText(`彼學島 · 和${characterName}一起探索`, 154, 65);
       context.fillStyle = "#27233a";
       context.font = `900 ${ratio === "4:3" ? 48 : 52}px Nunito, 'Noto Sans TC', sans-serif`;
       context.fillText(courseTitle, 154, 105);
@@ -381,7 +450,7 @@ export default function Home() {
       });
 
       try {
-        const foxImage = await loadCanvasImage("/fox.jpg");
+        const foxImage = await loadCanvasImage(characterImage);
         const currentPosition = positions[Math.min(currentIndex, positions.length - 1)];
         if (currentPosition) {
           const foxSize = Math.max(80, nodeRadius * 2.05);
@@ -406,7 +475,7 @@ export default function Home() {
       context.textBaseline = "middle";
       context.fillStyle = "#8175d8";
       context.font = "900 18px Nunito, 'Noto Sans TC', sans-serif";
-      context.fillText("✦  每一步都算數，和小彼一起走到終點！", surfaceX + 48, surfaceY + surfaceHeight - 42);
+      context.fillText(`✦  每一步都算數，和${characterName}一起走到終點！`, surfaceX + 48, surfaceY + surfaceHeight - 42);
       context.textAlign = "right";
       context.fillStyle = "#6f6a7c";
       context.font = "700 16px Nunito, 'Noto Sans TC', sans-serif";
@@ -441,7 +510,7 @@ export default function Home() {
           <span className="brand-mark">彼</span>
           <span>
             <strong>彼學島</strong>
-            <small>和小彼一起探索</small>
+            <small>和{characterName}一起探索</small>
           </span>
         </a>
         <div className="header-actions">
@@ -458,11 +527,11 @@ export default function Home() {
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow"><span>LEARNING QUEST</span> 任何主題都能變成冒險</p>
-          <h1>陪著小彼，<br /><em>一步一步</em>完成學習！</h1>
-          <p className="hero-description">語言、程式、攝影或任何新技能，都能排成專屬路線。準備好後按下出發，看小彼一路走到終點吧。</p>
+          <h1>陪著{characterName}，<br /><em>一步一步</em>完成學習！</h1>
+          <p className="hero-description">語言、程式、攝影或任何新技能，都能排成專屬路線。準備好後按下出發，看{characterName}一路走到終點吧。</p>
           <div className="hero-buttons">
             <button className="primary-button" type="button" onClick={beginJourney} disabled={isRunning}>
-              <span aria-hidden="true">▶</span> {isRunning ? "小彼前進中…" : "小彼出發"}
+              <span aria-hidden="true">▶</span> {isRunning ? `${characterName}前進中…` : `${characterName}出發`}
             </button>
             <a className="text-link" href="#course-map">看看課程地圖 <span aria-hidden="true">↓</span></a>
           </div>
@@ -470,13 +539,13 @@ export default function Home() {
             <span><strong>自由編輯課程關卡</strong></span>
           </div>
         </div>
-        <div className="hero-visual" aria-label="狐狸學習夥伴小彼">
+        <div className="hero-visual" aria-label={`學習夥伴${characterName}`}>
           <div className="sparkle sparkle-one">✦</div>
           <div className="sparkle sparkle-two">✦</div>
           <div className="code-chip chip-left">知識 +1</div>
           <div className="code-chip chip-right">新技能</div>
           <div className="hero-image-ring">
-            <img src="/fox.jpg" alt="拿著電腦和桌球拍的可愛白狐狸" />
+            <img src={characterImage} alt={`學習夥伴${characterName}`} />
           </div>
           <div className="speech-bubble">一起出發吧！<span>♥</span></div>
         </div>
@@ -486,7 +555,7 @@ export default function Home() {
         <div className="section-heading">
           <p className="eyebrow"><span>LEARNING MAP</span> 你的專屬學習路線</p>
           <h2>今天想走到哪一關？</h2>
-          <p>點一下任一關卡，小彼會沿著路線逐關前進；也可以從第一關開始完整播放。</p>
+          <p>點一下任一關卡，{characterName}會沿著路線逐關前進；也可以從第一關開始完整播放。</p>
         </div>
 
         <div className="map-shell">
@@ -497,7 +566,7 @@ export default function Home() {
             </div>
             <div className="map-actions">
               <button type="button" className="small-export" onClick={() => { setExportError(""); setIsExportOpen(true); }}>⇩ 輸出圖片</button>
-              <button type="button" className="small-edit" onClick={openEditor}>⚙ 管理主題</button>
+              <button type="button" className="small-edit" onClick={openEditor}>⚙ 管理課程</button>
             </div>
           </div>
 
@@ -510,8 +579,8 @@ export default function Home() {
                 style={{ left: foxPosition.x, top: foxPosition.y }}
                 aria-hidden="true"
               >
-                <span className="fox-name">小彼</span>
-                <img src="/fox.jpg" alt="" />
+                <span className="fox-name">{characterName}</span>
+                <img src={characterImage} alt="" />
               </div>
             )}
 
@@ -568,7 +637,7 @@ export default function Home() {
       </section>
 
       <footer>
-        <div className="footer-fox"><img src="/fox.jpg" alt="可愛白狐狸小彼" /></div>
+        <div className="footer-fox"><img src={characterImage} alt={`學習夥伴${characterName}`} /></div>
         <div><strong>保持好奇，繼續探索。</strong><p>下一個會的新技能，可能就從今天的一小步開始。</p></div>
         <button type="button" className="primary-button compact" onClick={beginJourney}>再走一次 ↗</button>
       </footer>
@@ -577,14 +646,57 @@ export default function Home() {
         <div className="editor-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsEditorOpen(false); }}>
           <section className="editor-panel" role="dialog" aria-modal="true" aria-labelledby="editor-title">
             <div className="editor-header">
-              <div><p className="eyebrow"><span>COURSE EDITOR</span></p><h2 id="editor-title">編輯課程主題</h2></div>
+              <div><p className="eyebrow"><span>COURSE EDITOR</span></p><h2 id="editor-title">編輯課程與角色</h2></div>
               <button className="icon-button" type="button" onClick={() => setIsEditorOpen(false)} aria-label="關閉編輯器">×</button>
             </div>
-            <p className="editor-help">逐項調整名稱與順序，或一次貼上多行文字快速建立整張課程地圖；可愛圖案會自動搭配。</p>
+            <p className="editor-help">設定課程與學習夥伴，再逐項調整關卡，或一次貼上多行文字快速建立整張課程地圖。</p>
             <label className="course-name-field">
               <span>課程名稱</span>
               <input value={draftCourseTitle} onChange={(event) => setDraftCourseTitle(event.target.value)} maxLength={40} placeholder="例如：日文五十音冒險" />
             </label>
+            <section className="character-settings" aria-labelledby="character-settings-title">
+              <img className="character-preview" src={draftCharacterImage} alt={`${draftCharacterName || defaultCharacterName}的角色預覽`} />
+              <div className="character-settings-body">
+                <strong id="character-settings-title">學習夥伴</strong>
+                <label className="character-name-field">
+                  <span>角色名字</span>
+                  <input
+                    value={draftCharacterName}
+                    onChange={(event) => setDraftCharacterName(event.target.value)}
+                    maxLength={12}
+                    placeholder={defaultCharacterName}
+                  />
+                </label>
+                <div className="character-actions">
+                  <label className="character-upload-button">
+                    <input
+                      className="sr-only"
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      onChange={(event) => {
+                        const file = event.currentTarget.files?.[0];
+                        event.currentTarget.value = "";
+                        void updateDraftCharacterImage(file);
+                      }}
+                    />
+                    上傳角色圖片
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDraftCharacterName(defaultCharacterName);
+                      setDraftCharacterImage(defaultCharacterImage);
+                      setCharacterImageError("");
+                    }}
+                  >
+                    恢復小彼
+                  </button>
+                </div>
+                <p className={`character-image-note ${characterImageError ? "is-error" : ""}`} aria-live="polite">
+                  {characterImageError || "圖片會裁成正方形並保存在此瀏覽器。"}
+                </p>
+              </div>
+            </section>
             <div className="editor-mode-switch" role="tablist" aria-label="課程編輯方式">
               <button className={editorMode === "list" ? "active" : ""} type="button" role="tab" aria-selected={editorMode === "list"} onClick={() => changeEditorMode("list")}>逐項編輯</button>
               <button className={editorMode === "bulk" ? "active" : ""} type="button" role="tab" aria-selected={editorMode === "bulk"} onClick={() => changeEditorMode("bulk")}>多行快速輸入</button>
@@ -643,7 +755,7 @@ export default function Home() {
               <div><p className="eyebrow"><span>EXPORT MAP</span></p><h2 id="export-title">輸出課程地圖</h2></div>
               <button className="icon-button" type="button" onClick={() => setIsExportOpen(false)} disabled={Boolean(isExporting)} aria-label="關閉輸出視窗">×</button>
             </div>
-            <p className="export-help">選擇投影片比例，系統會把課程名稱、全部關卡、路線與小彼排進一張高解析度 PNG。</p>
+            <p className="export-help">選擇投影片比例，系統會把課程名稱、全部關卡、路線與{characterName}排進一張高解析度 PNG。</p>
             <div className="ratio-options">
               <button type="button" className="ratio-card" onClick={() => exportCourseMap("4:3")} disabled={Boolean(isExporting)}>
                 <span className="ratio-preview ratio-four-three"><i /><i /><i /></span>
