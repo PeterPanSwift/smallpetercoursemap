@@ -396,6 +396,8 @@ footer p { color: #bcb7c9; font-size: 13px; margin: 5px 0 0; }
   .brand-mark { height: 41px; width: 41px; }
   .header-actions { gap: 6px; }
   .edit-button, .header-export-button { font-size: 12px; gap: 5px; height: 42px; padding: 0 10px; }
+  html[lang="en"] .brand-mark { display: none; }
+  html[lang="en"] .edit-button, html[lang="en"] .header-export-button { font-size: 11px; padding: 0 9px; }
   .hero { min-height: auto; padding: 54px 20px 70px; }
   h1 { font-size: 43px; }
   .hero-description { font-size: 15px; }

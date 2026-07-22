@@ -9,8 +9,9 @@ type Topic = {
 };
 
 type ExportRatio = "4:3" | "16:9";
+type Locale = "zh" | "en";
 
-const defaultTopics: Topic[] = [
+const defaultTopicsZh: Topic[] = [
   { id: "swiftui-intro", title: "SwiftUI 初相見" },
   { id: "views-modifiers", title: "View 與修飾器" },
   { id: "stacks-layout", title: "Stacks 組合術" },
@@ -23,9 +24,194 @@ const defaultTopics: Topic[] = [
   { id: "portfolio", title: "我的 SwiftUI 作品" },
 ];
 
-const defaultCourseTitle = "SwiftUI 入門冒險";
-const defaultCharacterName = "小彼";
+const defaultTopicsEn: Topic[] = [
+  { id: "swiftui-intro", title: "Meet SwiftUI" },
+  { id: "views-modifiers", title: "Views and Modifiers" },
+  { id: "stacks-layout", title: "Building with Stacks" },
+  { id: "state-data", title: "State and Data Flow" },
+  { id: "lists-navigation", title: "Lists and Navigation" },
+  { id: "animation", title: "Animation Magic" },
+  { id: "forms-controls", title: "Forms and Controls" },
+  { id: "networking", title: "Networking and Data" },
+  { id: "components", title: "Reusable Components" },
+  { id: "portfolio", title: "My SwiftUI Project" },
+];
+
+const localizedDefaults = {
+  zh: { topics: defaultTopicsZh, courseTitle: "SwiftUI 入門冒險", characterName: "小彼" },
+  en: { topics: defaultTopicsEn, courseTitle: "SwiftUI Starter Adventure", characterName: "Little Peter" },
+} satisfies Record<Locale, { topics: Topic[]; courseTitle: string; characterName: string }>;
+
 const defaultCharacterImage = "/fox.jpg";
+
+const translations = {
+  zh: {
+    brandName: "彼學島",
+    brandHome: "彼學島首頁",
+    brandTagline: (name: string) => `和${name}一起探索`,
+    progress: (value: number) => `目前進度 ${value}%`,
+    edit: "編輯角色關卡",
+    exportImage: "輸出圖片",
+    questLine: "任何主題都能變成冒險",
+    heroBefore: "陪著",
+    heroEmphasis: "一步一步",
+    heroAfter: "完成學習！",
+    heroDescription: (name: string) => `語言、程式、攝影或任何新技能，都能排成專屬路線。準備好後按下出發，看${name}一路走到終點吧。`,
+    moving: (name: string) => `${name}前進中…`,
+    start: (name: string) => `${name}出發`,
+    viewMap: "看看課程地圖",
+    buddyAria: (name: string) => `學習夥伴${name}`,
+    knowledge: "知識 +1",
+    newSkill: "新技能",
+    letsGo: "一起出發吧！",
+    mapLine: "你的專屬學習路線",
+    mapTitle: "今天想走到哪一關？",
+    mapDescription: (name: string) => `點一下任一關卡，${name}會沿著路線逐關前進；也可以從第一關開始完整播放。`,
+    currentCourse: "CURRENT COURSE",
+    levelAria: (index: number, title: string) => `第 ${index} 關：${title}`,
+    completed: "已走過",
+    currentPosition: "目前位置",
+    level: (index: number) => `第 ${index} 關`,
+    finish: "完成這趟學習冒險！",
+    stayCurious: "保持好奇，繼續探索。",
+    nextSkill: "下一個會的新技能，可能就從今天的一小步開始。",
+    again: "再走一次 ↗",
+    editorTitle: "編輯課程與角色",
+    closeEditor: "關閉編輯器",
+    editorHelp: "設定課程與學習夥伴，再逐項調整關卡，或一次貼上多行文字快速建立整張課程地圖。",
+    courseName: "課程名稱",
+    coursePlaceholder: "例如：日文五十音冒險",
+    characterPreview: (name: string) => `${name}的角色預覽`,
+    learningBuddy: "學習夥伴",
+    characterName: "角色名字",
+    uploadCharacter: "上傳角色圖片",
+    restoreCharacter: "恢復小彼",
+    imageNote: "圖片會裁成正方形並保存在此瀏覽器。",
+    editorMethod: "課程編輯方式",
+    editOneByOne: "逐項編輯",
+    bulkInput: "多行快速輸入",
+    topicAria: (index: number) => `第 ${index} 關主題`,
+    moveUp: (title: string) => `將 ${title} 往上移`,
+    moveDown: (title: string) => `將 ${title} 往下移`,
+    deleteTopic: (title: string) => `刪除 ${title}`,
+    newTopic: "新的課程主題",
+    addTopic: "＋ 新增一個課程主題",
+    oneLineOneLevel: "一行就是一個關卡",
+    bulkTip: "可直接從記事本或試算表貼上；空白行會自動忽略。",
+    topicList: "課程主題清單",
+    bulkPlaceholder: "攝影構圖基礎\n光線與曝光\n人像攝影實作",
+    bulkSummaryBefore: "目前會建立",
+    bulkSummaryAfter: "個關卡",
+    applyBulk: "套用並切回逐項編輯 →",
+    resetTen: "還原預設 10 關",
+    cancel: "取消",
+    save: "儲存並更新地圖",
+    exportTitle: "輸出課程地圖",
+    closeExport: "關閉輸出視窗",
+    exportHelp: (name: string) => `選擇投影片比例，系統會把課程名稱、全部關卡、路線與${name}排進一張高解析度 PNG。`,
+    generating: "正在產生…",
+    standardSlide: "4:3 標準投影片",
+    widescreen: "16:9 寬螢幕",
+    exportNote: "圖片會直接下載到裝置，不會上傳課程內容。",
+    imageLoadFailed: "圖片載入失敗",
+    chooseImage: "請選擇圖片檔案。",
+    imageTooLarge: "圖片請小於 10 MB。",
+    cannotReadImage: "無法讀取這張圖片。",
+    cannotProcessImage: "無法處理這張圖片。",
+    imageProcessFailed: "圖片處理失敗，請換一張再試。",
+    cannotCreateImage: "無法建立圖片",
+    exportFailed: "圖片輸出失敗",
+    exportTryAgain: "圖片輸出失敗，請再試一次。",
+    fallbackCourseTitle: "我的學習冒險",
+    fileName: "課程地圖",
+    exportBrand: (name: string) => `彼學島 · 和${name}一起探索`,
+    exportProgress: (count: number, progress: number) => `${count} 個冒險關卡 · ${progress}% 完成`,
+    exportFooter: (name: string) => `✦  每一步都算數，和${name}一起走到終點！`,
+  },
+  en: {
+    brandName: "Peter Learning Island",
+    brandHome: "Peter Learning Island home",
+    brandTagline: (name: string) => `Explore with ${name}`,
+    progress: (value: number) => `Current progress ${value}%`,
+    edit: "Edit Character & Levels",
+    exportImage: "Export Image",
+    questLine: "Turn any topic into an adventure",
+    heroBefore: "Learn with",
+    heroEmphasis: "step by step",
+    heroAfter: "and finish strong!",
+    heroDescription: (name: string) => `Languages, coding, photography, or any new skill can become your own learning path. Press start and watch ${name} travel all the way to the finish.`,
+    moving: (name: string) => `${name} is moving…`,
+    start: (name: string) => `Start with ${name}`,
+    viewMap: "View the course map",
+    buddyAria: (name: string) => `Learning buddy ${name}`,
+    knowledge: "Knowledge +1",
+    newSkill: "New skill",
+    letsGo: "Let's go!",
+    mapLine: "Your personal learning path",
+    mapTitle: "How far will you go today?",
+    mapDescription: (name: string) => `Select any level and ${name} will follow the path one step at a time. You can also play the entire journey from level one.`,
+    currentCourse: "CURRENT COURSE",
+    levelAria: (index: number, title: string) => `Level ${index}: ${title}`,
+    completed: "Completed",
+    currentPosition: "Current position",
+    level: (index: number) => `Level ${index}`,
+    finish: "Complete this learning adventure!",
+    stayCurious: "Stay curious. Keep exploring.",
+    nextSkill: "Your next skill may begin with one small step today.",
+    again: "Start again ↗",
+    editorTitle: "Edit Course & Character",
+    closeEditor: "Close editor",
+    editorHelp: "Set up your course and learning buddy, then edit each level or paste multiple lines to build the whole map at once.",
+    courseName: "Course title",
+    coursePlaceholder: "For example: Japanese Alphabet Adventure",
+    characterPreview: (name: string) => `${name} character preview`,
+    learningBuddy: "Learning buddy",
+    characterName: "Character name",
+    uploadCharacter: "Upload character image",
+    restoreCharacter: "Restore Little Peter",
+    imageNote: "The image is cropped to a square and saved only in this browser.",
+    editorMethod: "Course editing method",
+    editOneByOne: "Edit one by one",
+    bulkInput: "Quick multiline input",
+    topicAria: (index: number) => `Topic for level ${index}`,
+    moveUp: (title: string) => `Move ${title} up`,
+    moveDown: (title: string) => `Move ${title} down`,
+    deleteTopic: (title: string) => `Delete ${title}`,
+    newTopic: "New course topic",
+    addTopic: "+ Add a course topic",
+    oneLineOneLevel: "One line equals one level",
+    bulkTip: "Paste directly from notes or a spreadsheet. Blank lines are ignored.",
+    topicList: "Course topic list",
+    bulkPlaceholder: "Photography composition\nLight and exposure\nPortrait photography practice",
+    bulkSummaryBefore: "This will create",
+    bulkSummaryAfter: "levels",
+    applyBulk: "Apply and return to list editing →",
+    resetTen: "Reset to 10 default levels",
+    cancel: "Cancel",
+    save: "Save and update map",
+    exportTitle: "Export Course Map",
+    closeExport: "Close export window",
+    exportHelp: (name: string) => `Choose a slide ratio to arrange the course title, every level, the route, and ${name} in one high-resolution PNG.`,
+    generating: "Generating…",
+    standardSlide: "4:3 Standard Slide",
+    widescreen: "16:9 Widescreen",
+    exportNote: "The image downloads directly to your device. Course content is not uploaded.",
+    imageLoadFailed: "Unable to load the image",
+    chooseImage: "Please choose an image file.",
+    imageTooLarge: "Please use an image smaller than 10 MB.",
+    cannotReadImage: "Unable to read this image.",
+    cannotProcessImage: "Unable to process this image.",
+    imageProcessFailed: "Image processing failed. Please try another image.",
+    cannotCreateImage: "Unable to create the image",
+    exportFailed: "Image export failed",
+    exportTryAgain: "Image export failed. Please try again.",
+    fallbackCourseTitle: "My Learning Adventure",
+    fileName: "course-map",
+    exportBrand: (name: string) => `Peter Learning Island · Explore with ${name}`,
+    exportProgress: (count: number, progress: number) => `${count} adventure levels · ${progress}% complete`,
+    exportFooter: (name: string) => `✦  Every step counts. Reach the finish with ${name}!`,
+  },
+} as const;
 
 const xPositions = [22, 50, 78, 58, 25, 44, 76, 57, 24, 50];
 const nodeMotifs = ["✦", "♡", "☁", "✿", "☀", "♫", "★", "☺", "◇", "❋"];
@@ -76,29 +262,30 @@ function drawWrappedText(
   lines.forEach((line, index) => context.fillText(line, x, y + index * lineHeight));
 }
 
-function loadCanvasImage(source: string) {
+function loadCanvasImage(source: string, errorMessage: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error("圖片載入失敗"));
+    image.onerror = () => reject(new Error(errorMessage));
     image.src = source;
   });
 }
 
-async function createCharacterImage(file: File) {
-  if (!file.type.startsWith("image/")) throw new Error("請選擇圖片檔案。");
-  if (file.size > 10 * 1024 * 1024) throw new Error("圖片請小於 10 MB。");
+async function createCharacterImage(file: File, locale: Locale) {
+  const t = translations[locale];
+  if (!file.type.startsWith("image/")) throw new Error(t.chooseImage);
+  if (file.size > 10 * 1024 * 1024) throw new Error(t.imageTooLarge);
 
   const source = URL.createObjectURL(file);
   try {
-    const image = await loadCanvasImage(source);
+    const image = await loadCanvasImage(source, t.imageLoadFailed);
     const cropSize = Math.min(image.naturalWidth, image.naturalHeight);
-    if (!cropSize) throw new Error("無法讀取這張圖片。");
+    if (!cropSize) throw new Error(t.cannotReadImage);
     const canvas = document.createElement("canvas");
     canvas.width = 512;
     canvas.height = 512;
     const context = canvas.getContext("2d");
-    if (!context) throw new Error("無法處理這張圖片。");
+    if (!context) throw new Error(t.cannotProcessImage);
     context.fillStyle = "#ffffff";
     context.fillRect(0, 0, 512, 512);
     context.drawImage(
@@ -130,13 +317,16 @@ function topicsFromLines(text: string, previousTopics: Topic[]): Topic[] {
 }
 
 export default function Home() {
-  const [topics, setTopics] = useState<Topic[]>(defaultTopics);
-  const [courseTitle, setCourseTitle] = useState(defaultCourseTitle);
-  const [draftTopics, setDraftTopics] = useState<Topic[]>(defaultTopics);
-  const [draftCourseTitle, setDraftCourseTitle] = useState(defaultCourseTitle);
-  const [characterName, setCharacterName] = useState(defaultCharacterName);
+  const [locale, setLocale] = useState<Locale>("zh");
+  const t = translations[locale];
+  const defaults = localizedDefaults[locale];
+  const [topics, setTopics] = useState<Topic[]>(defaultTopicsZh);
+  const [courseTitle, setCourseTitle] = useState(localizedDefaults.zh.courseTitle);
+  const [draftTopics, setDraftTopics] = useState<Topic[]>(defaultTopicsZh);
+  const [draftCourseTitle, setDraftCourseTitle] = useState(localizedDefaults.zh.courseTitle);
+  const [characterName, setCharacterName] = useState(localizedDefaults.zh.characterName);
   const [characterImage, setCharacterImage] = useState(defaultCharacterImage);
-  const [draftCharacterName, setDraftCharacterName] = useState(defaultCharacterName);
+  const [draftCharacterName, setDraftCharacterName] = useState(localizedDefaults.zh.characterName);
   const [draftCharacterImage, setDraftCharacterImage] = useState(defaultCharacterImage);
   const [characterImageError, setCharacterImageError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -146,7 +336,7 @@ export default function Home() {
   const [isExporting, setIsExporting] = useState<ExportRatio | null>(null);
   const [exportError, setExportError] = useState("");
   const [editorMode, setEditorMode] = useState<"list" | "bulk">("list");
-  const [bulkText, setBulkText] = useState(defaultTopics.map((topic) => topic.title).join("\n"));
+  const [bulkText, setBulkText] = useState(defaultTopicsZh.map((topic) => topic.title).join("\n"));
   const [isHydrated, setIsHydrated] = useState(false);
   const [foxPosition, setFoxPosition] = useState({ x: 0, y: 0, ready: false });
   const mapRef = useRef<HTMLDivElement>(null);
@@ -154,6 +344,13 @@ export default function Home() {
   const isRunning = journeyTarget !== null;
 
   useEffect(() => {
+    const detectedLocale: Locale = window.navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en";
+    const detectedDefaults = localizedDefaults[detectedLocale];
+    setLocale(detectedLocale);
+    document.documentElement.lang = detectedLocale === "zh" ? "zh-Hant" : "en";
+    document.title = detectedLocale === "zh"
+      ? "彼學島｜和小彼一起探索任何主題"
+      : "Peter Learning Island | Explore Any Topic with Little Peter";
     try {
       const saved = window.localStorage.getItem("swiftui-course-map-topics");
       const savedTitle = window.localStorage.getItem("course-map-title");
@@ -164,9 +361,11 @@ export default function Home() {
         if (Array.isArray(parsed) && parsed.length > 0) {
           setTopics(parsed.filter((topic) => topic?.title?.trim()).map((topic) => ({ id: topic.id, title: topic.title })));
         }
+      } else {
+        setTopics(detectedDefaults.topics.map((topic) => ({ ...topic })));
       }
-      if (savedTitle?.trim()) setCourseTitle(savedTitle.trim());
-      if (savedCharacterName?.trim()) setCharacterName(savedCharacterName.trim());
+      setCourseTitle(savedTitle?.trim() || detectedDefaults.courseTitle);
+      setCharacterName(savedCharacterName?.trim() || detectedDefaults.characterName);
       if (savedCharacterImage?.startsWith("data:image/")) setCharacterImage(savedCharacterImage);
     } catch {
       // If saved data is invalid, the friendly starter curriculum remains available.
@@ -285,7 +484,7 @@ export default function Home() {
   function addDraft() {
     setDraftTopics((items) => [
       ...items,
-      { id: `topic-${Date.now()}`, title: "新的課程主題" },
+      { id: `topic-${Date.now()}`, title: t.newTopic },
     ]);
   }
 
@@ -293,9 +492,9 @@ export default function Home() {
     if (!file) return;
     setCharacterImageError("");
     try {
-      setDraftCharacterImage(await createCharacterImage(file));
+      setDraftCharacterImage(await createCharacterImage(file, locale));
     } catch (error) {
-      setCharacterImageError(error instanceof Error ? error.message : "圖片處理失敗，請換一張再試。");
+      setCharacterImageError(error instanceof Error ? error.message : t.imageProcessFailed);
     }
   }
 
@@ -306,8 +505,8 @@ export default function Home() {
       .filter((topic) => topic.title.length > 0);
     if (cleaned.length === 0) return;
     setTopics(cleaned);
-    setCourseTitle(draftCourseTitle.trim() || "我的學習冒險");
-    setCharacterName(draftCharacterName.trim() || defaultCharacterName);
+    setCourseTitle(draftCourseTitle.trim() || t.fallbackCourseTitle);
+    setCharacterName(draftCharacterName.trim() || defaults.characterName);
     setCharacterImage(draftCharacterImage);
     setCurrentIndex(0);
     setJourneyTarget(null);
@@ -324,7 +523,7 @@ export default function Home() {
       canvas.width = dimensions.width;
       canvas.height = dimensions.height;
       const context = canvas.getContext("2d");
-      if (!context) throw new Error("無法建立圖片");
+      if (!context) throw new Error(t.cannotCreateImage);
 
       const { width, height } = dimensions;
       context.fillStyle = "#fffaf2";
@@ -354,12 +553,12 @@ export default function Home() {
       context.textAlign = "left";
       context.fillStyle = "#8175d8";
       context.font = "900 18px Nunito, 'Noto Sans TC', sans-serif";
-      context.fillText(`彼學島 · 和${characterName}一起探索`, 154, 65);
+      context.fillText(t.exportBrand(characterName), 154, 65);
       context.fillStyle = "#27233a";
       context.font = `900 ${ratio === "4:3" ? 48 : 52}px Nunito, 'Noto Sans TC', sans-serif`;
       context.fillText(courseTitle, 154, 105);
 
-      const progressText = `${topics.length} 個冒險關卡 · ${progress}% 完成`;
+      const progressText = t.exportProgress(topics.length, progress);
       context.font = "800 20px Nunito, 'Noto Sans TC', sans-serif";
       const progressWidth = context.measureText(progressText).width + 48;
       context.fillStyle = "#ffffff";
@@ -450,7 +649,7 @@ export default function Home() {
       });
 
       try {
-        const foxImage = await loadCanvasImage(characterImage);
+        const foxImage = await loadCanvasImage(characterImage, t.imageLoadFailed);
         const currentPosition = positions[Math.min(currentIndex, positions.length - 1)];
         if (currentPosition) {
           const foxSize = Math.max(80, nodeRadius * 2.05);
@@ -475,14 +674,14 @@ export default function Home() {
       context.textBaseline = "middle";
       context.fillStyle = "#8175d8";
       context.font = "900 18px Nunito, 'Noto Sans TC', sans-serif";
-      context.fillText(`✦  每一步都算數，和${characterName}一起走到終點！`, surfaceX + 48, surfaceY + surfaceHeight - 42);
+      context.fillText(t.exportFooter(characterName), surfaceX + 48, surfaceY + surfaceHeight - 42);
 
       const blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob((result) => result ? resolve(result) : reject(new Error("圖片輸出失敗")), "image/png");
+        canvas.toBlob((result) => result ? resolve(result) : reject(new Error(t.exportFailed)), "image/png");
       });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      const safeTitle = courseTitle.replace(/[\\/:*?"<>|]/g, "-").trim() || "課程地圖";
+      const safeTitle = courseTitle.replace(/[\\/:*?"<>|]/g, "-").trim() || t.fileName;
       link.download = `${safeTitle}-${ratio.replace(":", "x")}.png`;
       link.href = url;
       document.body.appendChild(link);
@@ -491,7 +690,7 @@ export default function Home() {
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       setIsExportOpen(false);
     } catch (error) {
-      setExportError(error instanceof Error ? error.message : "圖片輸出失敗，請再試一次。");
+      setExportError(error instanceof Error ? error.message : t.exportTryAgain);
     } finally {
       setIsExporting(null);
     }
@@ -502,62 +701,62 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="彼學島首頁">
+        <a className="brand" href="#top" aria-label={t.brandHome}>
           <span className="brand-mark">彼</span>
           <span>
-            <strong>彼學島</strong>
-            <small>和{characterName}一起探索</small>
+            <strong>{t.brandName}</strong>
+            <small>{t.brandTagline(characterName)}</small>
           </span>
         </a>
         <div className="header-actions">
-          <div className="progress-pill" aria-label={`目前進度 ${progress}%`}>
+          <div className="progress-pill" aria-label={t.progress(progress)}>
             <span>🔥</span>
             <strong>{progress}%</strong>
           </div>
           <button className="edit-button" type="button" onClick={openEditor}>
-            <span aria-hidden="true">✎</span> 編輯角色關卡
+            <span aria-hidden="true">✎</span> {t.edit}
           </button>
           <button className="header-export-button" type="button" onClick={() => { setExportError(""); setIsExportOpen(true); }}>
-            <span aria-hidden="true">⇩</span> 輸出圖片
+            <span aria-hidden="true">⇩</span> {t.exportImage}
           </button>
         </div>
       </header>
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow"><span>LEARNING QUEST</span> 任何主題都能變成冒險</p>
-          <h1>陪著{characterName}，<br /><em>一步一步</em>完成學習！</h1>
-          <p className="hero-description">語言、程式、攝影或任何新技能，都能排成專屬路線。準備好後按下出發，看{characterName}一路走到終點吧。</p>
+          <p className="eyebrow"><span>LEARNING QUEST</span> {t.questLine}</p>
+          <h1>{t.heroBefore} {characterName}{locale === "zh" ? "，" : ""}<br /><em>{t.heroEmphasis}</em> {t.heroAfter}</h1>
+          <p className="hero-description">{t.heroDescription(characterName)}</p>
           <div className="hero-buttons">
             <button className="primary-button" type="button" onClick={beginJourney} disabled={isRunning}>
-              <span aria-hidden="true">▶</span> {isRunning ? `${characterName}前進中…` : `${characterName}出發`}
+              <span aria-hidden="true">▶</span> {isRunning ? t.moving(characterName) : t.start(characterName)}
             </button>
-            <a className="text-link" href="#course-map">看看課程地圖 <span aria-hidden="true">↓</span></a>
+            <a className="text-link" href="#course-map">{t.viewMap} <span aria-hidden="true">↓</span></a>
           </div>
         </div>
-        <div className="hero-visual" aria-label={`學習夥伴${characterName}`}>
+        <div className="hero-visual" aria-label={t.buddyAria(characterName)}>
           <div className="sparkle sparkle-one">✦</div>
           <div className="sparkle sparkle-two">✦</div>
-          <div className="code-chip chip-left">知識 +1</div>
-          <div className="code-chip chip-right">新技能</div>
+          <div className="code-chip chip-left">{t.knowledge}</div>
+          <div className="code-chip chip-right">{t.newSkill}</div>
           <div className="hero-image-ring">
-            <img src={characterImage} alt={`學習夥伴${characterName}`} />
+            <img src={characterImage} alt={t.buddyAria(characterName)} />
           </div>
-          <div className="speech-bubble">一起出發吧！<span>♥</span></div>
+          <div className="speech-bubble">{t.letsGo}<span>♥</span></div>
         </div>
       </section>
 
       <section className="map-section" id="course-map">
         <div className="section-heading">
-          <p className="eyebrow"><span>LEARNING MAP</span> 你的專屬學習路線</p>
-          <h2>今天想走到哪一關？</h2>
-          <p>點一下任一關卡，{characterName}會沿著路線逐關前進；也可以從第一關開始完整播放。</p>
+          <p className="eyebrow"><span>LEARNING MAP</span> {t.mapLine}</p>
+          <h2>{t.mapTitle}</h2>
+          <p>{t.mapDescription(characterName)}</p>
         </div>
 
         <div className="map-shell">
           <div className="map-toolbar">
             <div>
-              <span className="chapter-label">CURRENT COURSE</span>
+              <span className="chapter-label">{t.currentCourse}</span>
               <strong>{courseTitle}</strong>
             </div>
           </div>
@@ -605,13 +804,13 @@ export default function Home() {
                         type="button"
                         ref={(element) => { nodeRefs.current[index] = element; }}
                         onClick={() => setJourneyTarget(index)}
-                        aria-label={`第 ${index + 1} 關：${topic.title}`}
+                        aria-label={t.levelAria(index + 1, topic.title)}
                       >
                         <span className="node-motif">{state === "complete" ? "✓" : nodeMotifs[index % nodeMotifs.length]}</span>
                         <span className="node-number">{String(index + 1).padStart(2, "0")}</span>
                       </button>
                       <div className="topic-label">
-                        <small>{state === "complete" ? "已走過" : state === "current" ? "目前位置" : `第 ${index + 1} 關`}</small>
+                        <small>{state === "complete" ? t.completed : state === "current" ? t.currentPosition : t.level(index + 1)}</small>
                         <strong>{topic.title}</strong>
                       </div>
                     </div>
@@ -622,41 +821,41 @@ export default function Home() {
 
             <div className={`finish-card ${currentIndex === topics.length - 1 ? "reached" : ""}`}>
               <span className="finish-icon">🏆</span>
-              <div><small>FINAL DESTINATION</small><strong>完成這趟學習冒險！</strong></div>
+              <div><small>FINAL DESTINATION</small><strong>{t.finish}</strong></div>
             </div>
           </div>
         </div>
       </section>
 
       <footer>
-        <div className="footer-fox"><img src={characterImage} alt={`學習夥伴${characterName}`} /></div>
-        <div><strong>保持好奇，繼續探索。</strong><p>下一個會的新技能，可能就從今天的一小步開始。</p></div>
-        <button type="button" className="primary-button compact" onClick={beginJourney}>再走一次 ↗</button>
+        <div className="footer-fox"><img src={characterImage} alt={t.buddyAria(characterName)} /></div>
+        <div><strong>{t.stayCurious}</strong><p>{t.nextSkill}</p></div>
+        <button type="button" className="primary-button compact" onClick={beginJourney}>{t.again}</button>
       </footer>
 
       {isEditorOpen && (
         <div className="editor-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsEditorOpen(false); }}>
           <section className="editor-panel" role="dialog" aria-modal="true" aria-labelledby="editor-title">
             <div className="editor-header">
-              <div><p className="eyebrow"><span>COURSE EDITOR</span></p><h2 id="editor-title">編輯課程與角色</h2></div>
-              <button className="icon-button" type="button" onClick={() => setIsEditorOpen(false)} aria-label="關閉編輯器">×</button>
+              <div><p className="eyebrow"><span>COURSE EDITOR</span></p><h2 id="editor-title">{t.editorTitle}</h2></div>
+              <button className="icon-button" type="button" onClick={() => setIsEditorOpen(false)} aria-label={t.closeEditor}>×</button>
             </div>
-            <p className="editor-help">設定課程與學習夥伴，再逐項調整關卡，或一次貼上多行文字快速建立整張課程地圖。</p>
+            <p className="editor-help">{t.editorHelp}</p>
             <label className="course-name-field">
-              <span>課程名稱</span>
-              <input value={draftCourseTitle} onChange={(event) => setDraftCourseTitle(event.target.value)} maxLength={40} placeholder="例如：日文五十音冒險" />
+              <span>{t.courseName}</span>
+              <input value={draftCourseTitle} onChange={(event) => setDraftCourseTitle(event.target.value)} maxLength={40} placeholder={t.coursePlaceholder} />
             </label>
             <section className="character-settings" aria-labelledby="character-settings-title">
-              <img className="character-preview" src={draftCharacterImage} alt={`${draftCharacterName || defaultCharacterName}的角色預覽`} />
+              <img className="character-preview" src={draftCharacterImage} alt={t.characterPreview(draftCharacterName || defaults.characterName)} />
               <div className="character-settings-body">
-                <strong id="character-settings-title">學習夥伴</strong>
+                <strong id="character-settings-title">{t.learningBuddy}</strong>
                 <label className="character-name-field">
-                  <span>角色名字</span>
+                  <span>{t.characterName}</span>
                   <input
                     value={draftCharacterName}
                     onChange={(event) => setDraftCharacterName(event.target.value)}
                     maxLength={12}
-                    placeholder={defaultCharacterName}
+                    placeholder={defaults.characterName}
                   />
                 </label>
                 <div className="character-actions">
@@ -671,27 +870,27 @@ export default function Home() {
                         void updateDraftCharacterImage(file);
                       }}
                     />
-                    上傳角色圖片
+                    {t.uploadCharacter}
                   </label>
                   <button
                     type="button"
                     onClick={() => {
-                      setDraftCharacterName(defaultCharacterName);
+                      setDraftCharacterName(defaults.characterName);
                       setDraftCharacterImage(defaultCharacterImage);
                       setCharacterImageError("");
                     }}
                   >
-                    恢復小彼
+                    {t.restoreCharacter}
                   </button>
                 </div>
                 <p className={`character-image-note ${characterImageError ? "is-error" : ""}`} aria-live="polite">
-                  {characterImageError || "圖片會裁成正方形並保存在此瀏覽器。"}
+                  {characterImageError || t.imageNote}
                 </p>
               </div>
             </section>
-            <div className="editor-mode-switch" role="tablist" aria-label="課程編輯方式">
-              <button className={editorMode === "list" ? "active" : ""} type="button" role="tab" aria-selected={editorMode === "list"} onClick={() => changeEditorMode("list")}>逐項編輯</button>
-              <button className={editorMode === "bulk" ? "active" : ""} type="button" role="tab" aria-selected={editorMode === "bulk"} onClick={() => changeEditorMode("bulk")}>多行快速輸入</button>
+            <div className="editor-mode-switch" role="tablist" aria-label={t.editorMethod}>
+              <button className={editorMode === "list" ? "active" : ""} type="button" role="tab" aria-selected={editorMode === "list"} onClick={() => changeEditorMode("list")}>{t.editOneByOne}</button>
+              <button className={editorMode === "bulk" ? "active" : ""} type="button" role="tab" aria-selected={editorMode === "bulk"} onClick={() => changeEditorMode("bulk")}>{t.bulkInput}</button>
             </div>
 
             {editorMode === "list" ? (
@@ -702,39 +901,39 @@ export default function Home() {
                       <span className="drag-number">{String(index + 1).padStart(2, "0")}</span>
                       <span className="fixed-motif" aria-hidden="true">{nodeMotifs[index % nodeMotifs.length]}</span>
                       <label className="topic-input-label">
-                        <span className="sr-only">第 {index + 1} 關主題</span>
+                        <span className="sr-only">{t.topicAria(index + 1)}</span>
                         <input value={topic.title} onChange={(event) => updateDraft(topic.id, event.target.value)} maxLength={42} />
                       </label>
                       <div className="row-actions">
-                        <button type="button" onClick={() => moveDraft(index, -1)} disabled={index === 0} aria-label={`將 ${topic.title} 往上移`}>↑</button>
-                        <button type="button" onClick={() => moveDraft(index, 1)} disabled={index === draftTopics.length - 1} aria-label={`將 ${topic.title} 往下移`}>↓</button>
-                        <button className="delete-topic" type="button" onClick={() => setDraftTopics((items) => items.filter((item) => item.id !== topic.id))} disabled={draftTopics.length === 1} aria-label={`刪除 ${topic.title}`}>×</button>
+                        <button type="button" onClick={() => moveDraft(index, -1)} disabled={index === 0} aria-label={t.moveUp(topic.title)}>↑</button>
+                        <button type="button" onClick={() => moveDraft(index, 1)} disabled={index === draftTopics.length - 1} aria-label={t.moveDown(topic.title)}>↓</button>
+                        <button className="delete-topic" type="button" onClick={() => setDraftTopics((items) => items.filter((item) => item.id !== topic.id))} disabled={draftTopics.length === 1} aria-label={t.deleteTopic(topic.title)}>×</button>
                       </div>
                     </div>
                   ))}
                 </div>
-                <button className="add-topic" type="button" onClick={addDraft}>＋ 新增一個課程主題</button>
+                <button className="add-topic" type="button" onClick={addDraft}>{t.addTopic}</button>
               </>
             ) : (
               <div className="bulk-editor">
-                <div className="bulk-tip"><span aria-hidden="true">↵</span><div><strong>一行就是一個關卡</strong><p>可直接從記事本或試算表貼上；空白行會自動忽略。</p></div></div>
-                <label htmlFor="bulk-topics">課程主題清單</label>
+                <div className="bulk-tip"><span aria-hidden="true">↵</span><div><strong>{t.oneLineOneLevel}</strong><p>{t.bulkTip}</p></div></div>
+                <label htmlFor="bulk-topics">{t.topicList}</label>
                 <textarea
                   id="bulk-topics"
                   value={bulkText}
                   onChange={(event) => setBulkText(event.target.value)}
-                  placeholder={"攝影構圖基礎\n光線與曝光\n人像攝影實作"}
+                  placeholder={t.bulkPlaceholder}
                   spellCheck="false"
                 />
                 <div className="bulk-summary">
-                  <span>目前會建立 <strong>{topicsFromLines(bulkText, draftTopics).length}</strong> 個關卡</span>
-                  <button type="button" onClick={() => changeEditorMode("list")} disabled={topicsFromLines(bulkText, draftTopics).length === 0}>套用並切回逐項編輯 →</button>
+                  <span>{t.bulkSummaryBefore} <strong>{topicsFromLines(bulkText, draftTopics).length}</strong> {t.bulkSummaryAfter}</span>
+                  <button type="button" onClick={() => changeEditorMode("list")} disabled={topicsFromLines(bulkText, draftTopics).length === 0}>{t.applyBulk}</button>
                 </div>
               </div>
             )}
             <div className="editor-footer">
-              <button className="ghost-button" type="button" onClick={() => { const defaults = defaultTopics.map((topic) => ({ ...topic })); setDraftTopics(defaults); setDraftCourseTitle(defaultCourseTitle); setBulkText(defaults.map((topic) => topic.title).join("\n")); }}>還原預設 10 關</button>
-              <div><button className="text-cancel" type="button" onClick={() => setIsEditorOpen(false)}>取消</button><button className="primary-button compact" type="button" onClick={saveDraft}>儲存並更新地圖</button></div>
+              <button className="ghost-button" type="button" onClick={() => { const resetTopics = defaults.topics.map((topic) => ({ ...topic })); setDraftTopics(resetTopics); setDraftCourseTitle(defaults.courseTitle); setBulkText(resetTopics.map((topic) => topic.title).join("\n")); }}>{t.resetTen}</button>
+              <div><button className="text-cancel" type="button" onClick={() => setIsEditorOpen(false)}>{t.cancel}</button><button className="primary-button compact" type="button" onClick={saveDraft}>{t.save}</button></div>
             </div>
           </section>
         </div>
@@ -744,21 +943,21 @@ export default function Home() {
         <div className="export-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !isExporting) setIsExportOpen(false); }}>
           <section className="export-panel" role="dialog" aria-modal="true" aria-labelledby="export-title">
             <div className="export-header">
-              <div><p className="eyebrow"><span>EXPORT MAP</span></p><h2 id="export-title">輸出課程地圖</h2></div>
-              <button className="icon-button" type="button" onClick={() => setIsExportOpen(false)} disabled={Boolean(isExporting)} aria-label="關閉輸出視窗">×</button>
+              <div><p className="eyebrow"><span>EXPORT MAP</span></p><h2 id="export-title">{t.exportTitle}</h2></div>
+              <button className="icon-button" type="button" onClick={() => setIsExportOpen(false)} disabled={Boolean(isExporting)} aria-label={t.closeExport}>×</button>
             </div>
-            <p className="export-help">選擇投影片比例，系統會把課程名稱、全部關卡、路線與{characterName}排進一張高解析度 PNG。</p>
+            <p className="export-help">{t.exportHelp(characterName)}</p>
             <div className="ratio-options">
               <button type="button" className="ratio-card" onClick={() => exportCourseMap("4:3")} disabled={Boolean(isExporting)}>
                 <span className="ratio-preview ratio-four-three"><i /><i /><i /></span>
-                <span><strong>{isExporting === "4:3" ? "正在產生…" : "4:3 標準投影片"}</strong><small>1600 × 1200 PNG</small></span>
+                <span><strong>{isExporting === "4:3" ? t.generating : t.standardSlide}</strong><small>1600 × 1200 PNG</small></span>
               </button>
               <button type="button" className="ratio-card" onClick={() => exportCourseMap("16:9")} disabled={Boolean(isExporting)}>
                 <span className="ratio-preview ratio-sixteen-nine"><i /><i /><i /></span>
-                <span><strong>{isExporting === "16:9" ? "正在產生…" : "16:9 寬螢幕"}</strong><small>1920 × 1080 PNG</small></span>
+                <span><strong>{isExporting === "16:9" ? t.generating : t.widescreen}</strong><small>1920 × 1080 PNG</small></span>
               </button>
             </div>
-            <p className={`export-note ${exportError ? "is-error" : ""}`} aria-live="polite">{exportError || "圖片會直接下載到裝置，不會上傳課程內容。"}</p>
+            <p className={`export-note ${exportError ? "is-error" : ""}`} aria-live="polite">{exportError || t.exportNote}</p>
           </section>
         </div>
       )}
