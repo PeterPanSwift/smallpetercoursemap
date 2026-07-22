@@ -224,65 +224,32 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
 .course-row { height: 174px; position: relative; }
 .node-stage { left: var(--node-x); position: absolute; top: 18px; transform: translateX(-50%); z-index: 4; }
 .course-node {
-  --node-tilt: -1.4deg;
   align-items: center;
-  background-color: transparent;
-  background-image: url("/felt-level-locked.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 148% 148%;
+  background: #e7e4e9;
   border: 0;
-  border-radius: 0;
-  box-shadow: none;
+  border-radius: 50%;
+  box-shadow: 0 11px 0 #c9c5cf, 0 16px 24px rgba(50, 41, 82, .12);
   cursor: pointer;
   display: flex;
-  filter: drop-shadow(0 11px 8px rgba(83, 57, 40, .22));
-  height: 96px;
+  height: 82px;
   justify-content: center;
   position: relative;
-  transform: rotate(var(--node-tilt));
-  transition: .22s cubic-bezier(.2, .8, .3, 1.25);
-  width: 118px;
+  transition: .2s ease;
+  width: 104px;
 }
-.course-row:nth-child(3n + 2) .course-node { --node-tilt: 1.7deg; }
-.course-row:nth-child(3n) .course-node { --node-tilt: -.4deg; }
-.course-node:hover { transform: translateY(-4px) rotate(calc(var(--node-tilt) * -1)); }
-.current .course-node {
-  background-image: url("/felt-level-current.png");
-  filter: drop-shadow(0 13px 10px rgba(154, 67, 47, .3));
-  transform: rotate(var(--node-tilt)) scale(1.16);
-}
-.current .course-node:hover { transform: translateY(-3px) rotate(calc(var(--node-tilt) * -1)) scale(1.16); }
-.complete .course-node {
-  background-image: url("/felt-level-complete.png");
-  filter: drop-shadow(0 12px 9px rgba(64, 111, 91, .26));
-}
-.node-motif {
-  align-items: center;
-  background: rgba(255, 248, 232, .76);
-  border: 2px solid rgba(118, 85, 62, .25);
-  border-radius: 45% 55% 48% 52% / 55% 45% 56% 44%;
-  box-shadow: inset 1px 2px 4px rgba(255,255,255,.75), 0 2px 4px rgba(91,63,44,.13);
-  color: #806d5d;
-  display: flex;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 25px;
-  font-weight: 900;
-  height: 42px;
-  justify-content: center;
-  line-height: 1;
-  position: relative;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, .7);
-  width: 46px;
-  z-index: 2;
-}
-.current .node-motif, .complete .node-motif { background: rgba(255,248,232,.88); color: #8b493c; font-size: 27px; text-shadow: 0 1px 0 white; }
-.complete .node-motif { color: #3f715d; }
-.course-node::before, .course-node::after { content: none; }
-.node-number { background: #fff9e9; border: 1px dashed rgba(100,73,53,.35); border-radius: 9px 11px 8px 10px; bottom: -8px; box-shadow: 0 2px 4px rgba(77,55,39,.12); color: var(--muted); font-family: var(--font-nunito); font-size: 9px; font-weight: 900; left: 50%; padding: 3px 8px; position: absolute; transform: translateX(-50%) rotate(-1deg); z-index: 4; }
+.course-node:hover { transform: translateY(-4px); }
+.current .course-node { background: linear-gradient(145deg, #ff9173, var(--coral)); box-shadow: 0 11px 0 var(--coral-dark), 0 19px 28px rgba(233, 86, 52, .22); transform: scale(1.16); }
+.current .course-node:hover { transform: translateY(-3px) scale(1.16); }
+.complete .course-node { background: linear-gradient(145deg, #9fe1d2, var(--mint)); box-shadow: 0 11px 0 #5ba998, 0 19px 28px rgba(91, 169, 152, .2); }
+.node-motif { color: #85808c; font-family: Georgia, "Times New Roman", serif; font-size: 31px; font-weight: 900; line-height: 1; text-shadow: 0 2px 0 rgba(255, 255, 255, .65); }
+.current .node-motif, .complete .node-motif { color: white; font-size: 32px; text-shadow: 0 2px 0 rgba(94, 54, 67, .18); }
+.course-node::before, .course-node::after { background: currentColor; border-radius: 50%; color: rgba(255, 255, 255, .7); content: ""; height: 5px; position: absolute; top: 18px; width: 5px; }
+.course-node::before { left: 18px; }
+.course-node::after { right: 18px; }
+.node-number { background: white; border-radius: 999px; bottom: -5px; color: var(--muted); font-family: var(--font-nunito); font-size: 9px; font-weight: 900; left: 50%; padding: 3px 7px; position: absolute; transform: translateX(-50%); }
 .current .node-number { color: var(--coral-dark); }
 .complete .node-number { color: #408f7d; }
-.topic-label { background-color: rgba(255, 250, 237, .93); background-image: linear-gradient(rgba(255,250,237,.72), rgba(255,250,237,.72)), url("/felt-wool-texture.png"); background-blend-mode: normal, multiply; background-size: auto, 210px 210px; border: 1px solid rgba(181, 151, 125, .55); border-radius: 13px 17px 12px 16px; box-shadow: 0 5px 13px rgba(83,57,40,.1); padding: 10px 13px; position: absolute; top: -2px; width: 210px; }
+.topic-label { position: absolute; top: 7px; width: 200px; }
 .label-right .topic-label { left: 126px; text-align: left; }
 .label-left .topic-label { right: 126px; text-align: right; }
 .topic-label small { color: #99929e; display: block; font-size: 10px; font-weight: 700; margin-bottom: 4px; }
@@ -290,8 +257,7 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
 .current .topic-label strong { color: var(--coral-dark); font-size: 21px; font-weight: 900; }
 .complete .topic-label strong { color: #4c9e8c; }
 .trail-segment {
-  border-top: 6px dashed #c9ae90;
-  filter: drop-shadow(0 2px 1px rgba(99,72,51,.14));
+  border-top: 5px dotted #ddd5d0;
   left: var(--node-x);
   position: absolute;
   top: 61px;
@@ -300,7 +266,7 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
   width: var(--trail-length);
   z-index: 1;
 }
-.complete .trail-segment { border-color: #83ad98; }
+.complete .trail-segment { border-color: #a8d9ce; }
 
 .traveling-fox {
   filter: drop-shadow(0 11px 11px rgba(48, 38, 68, .18));
@@ -444,7 +410,7 @@ footer p { color: #bcb7c9; font-size: 13px; margin: 5px 0 0; }
   .map-toolbar strong { font-size: 13px; }
   .map-area { padding-top: 140px; }
   .course-row { height: 190px; }
-  .course-node { height: 86px; width: 104px; }
+  .course-node { height: 72px; width: 90px; }
   .topic-label { top: 90px; width: 155px; }
   .label-left .topic-label, .label-right .topic-label { left: 50%; right: auto; text-align: center; transform: translateX(-50%); }
   .topic-label strong { font-size: 13px; }

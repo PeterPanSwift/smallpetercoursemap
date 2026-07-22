@@ -262,36 +262,6 @@ function drawWrappedText(
   lines.forEach((line, index) => context.fillText(line, x, y + index * lineHeight));
 }
 
-function drawFeltFibers(
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  radiusX: number,
-  radiusY: number,
-  seed: number,
-) {
-  context.save();
-  context.beginPath();
-  context.ellipse(x, y, radiusX, radiusY, 0, 0, Math.PI * 2);
-  context.clip();
-  context.lineCap = "round";
-  for (let index = 0; index < 30; index += 1) {
-    const angle = ((index * 47 + seed * 31) % 360) * (Math.PI / 180);
-    const distance = (((index * 29 + seed * 13) % 84) / 100) ** 0.7;
-    const fiberX = x + Math.cos(angle) * radiusX * distance;
-    const fiberY = y + Math.sin(angle) * radiusY * distance;
-    const fiberAngle = ((index * 23 + seed * 17) % 180) * (Math.PI / 180);
-    const fiberLength = Math.max(2.5, radiusX * (0.045 + (index % 4) * 0.012));
-    context.strokeStyle = index % 3 === 0 ? "rgba(255,255,255,.25)" : "rgba(74,48,34,.12)";
-    context.lineWidth = Math.max(0.8, radiusX * 0.012);
-    context.beginPath();
-    context.moveTo(fiberX - Math.cos(fiberAngle) * fiberLength, fiberY - Math.sin(fiberAngle) * fiberLength);
-    context.lineTo(fiberX + Math.cos(fiberAngle) * fiberLength, fiberY + Math.sin(fiberAngle) * fiberLength);
-    context.stroke();
-  }
-  context.restore();
-}
-
 function loadCanvasImage(source: string, errorMessage: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
@@ -554,23 +524,6 @@ export default function Home() {
       canvas.height = dimensions.height;
       const context = canvas.getContext("2d");
       if (!context) throw new Error(t.cannotCreateImage);
-      let feltTexture: HTMLImageElement | null = null;
-      let feltLevelImages: { locked: HTMLImageElement; current: HTMLImageElement; complete: HTMLImageElement } | null = null;
-      try {
-        feltTexture = await loadCanvasImage("/felt-wool-texture.png", t.imageLoadFailed);
-      } catch {
-        // The map remains exportable with the drawn fiber fallback.
-      }
-      try {
-        const [locked, current, complete] = await Promise.all([
-          loadCanvasImage("/felt-level-locked.png", t.imageLoadFailed),
-          loadCanvasImage("/felt-level-current.png", t.imageLoadFailed),
-          loadCanvasImage("/felt-level-complete.png", t.imageLoadFailed),
-        ]);
-        feltLevelImages = { locked, current, complete };
-      } catch {
-        // The drawn felt nodes remain available if a photographic asset is unavailable.
-      }
 
       const { width, height } = dimensions;
       context.fillStyle = "#fffaf2";
@@ -664,115 +617,35 @@ export default function Home() {
       positions.forEach((position, index) => {
         const isComplete = index < currentIndex;
         const isCurrent = index === currentIndex;
-        const nodeColor = isComplete ? "#82b7a0" : isCurrent ? "#df775b" : "#d9c9b7";
-        const edgeColor = isComplete ? "#4f7867" : isCurrent ? "#a94334" : "#9e826b";
+        const nodeColor = isComplete ? "#83cfbd" : isCurrent ? "#ff704d" : "#e7e4e9";
+        const edgeColor = isComplete ? "#5ba998" : isCurrent ? "#e95634" : "#c9c5cf";
 
-        context.save();
-        context.shadowColor = "rgba(78,54,39,.22)";
-        context.shadowBlur = Math.max(5, nodeRadius * 0.18);
-        context.shadowOffsetY = Math.max(4, nodeRadius * 0.2);
         context.fillStyle = edgeColor;
         context.beginPath();
-        context.ellipse(position.x, position.y + nodeRadius * 0.2, nodeRadius * 1.23, nodeRadius * 1.01, index % 2 ? 0.025 : -0.025, 0, Math.PI * 2);
+        context.ellipse(position.x, position.y + nodeRadius * 0.22, nodeRadius * 1.22, nodeRadius, 0, 0, Math.PI * 2);
         context.fill();
-        context.shadowColor = "transparent";
         context.fillStyle = nodeColor;
         context.beginPath();
-        context.ellipse(position.x, position.y, nodeRadius * 1.19, nodeRadius * 0.98, index % 2 ? -0.025 : 0.025, 0, Math.PI * 2);
-        context.fill();
-        context.restore();
-
-        if (feltTexture) {
-          const sourceSize = Math.min(360, feltTexture.naturalWidth, feltTexture.naturalHeight);
-          const sourceRangeX = Math.max(1, feltTexture.naturalWidth - sourceSize);
-          const sourceRangeY = Math.max(1, feltTexture.naturalHeight - sourceSize);
-          const sourceX = (index * 83) % sourceRangeX;
-          const sourceY = (index * 61) % sourceRangeY;
-          context.save();
-          context.beginPath();
-          context.ellipse(position.x, position.y, nodeRadius * 1.18, nodeRadius * 0.97, index % 2 ? -0.025 : 0.025, 0, Math.PI * 2);
-          context.clip();
-          context.globalAlpha = 0.72;
-          context.globalCompositeOperation = "multiply";
-          context.drawImage(
-            feltTexture,
-            sourceX,
-            sourceY,
-            sourceSize,
-            sourceSize,
-            position.x - nodeRadius * 1.2,
-            position.y - nodeRadius,
-            nodeRadius * 2.4,
-            nodeRadius * 2,
-          );
-          context.restore();
-        }
-
-        drawFeltFibers(context, position.x, position.y, nodeRadius * 1.17, nodeRadius * 0.95, index + 1);
-
-        context.save();
-        context.strokeStyle = isComplete ? "rgba(42,86,66,.42)" : isCurrent ? "rgba(105,39,29,.43)" : "rgba(91,64,46,.36)";
-        context.lineWidth = Math.max(1.5, nodeRadius * 0.045);
-        context.setLineDash([Math.max(3, nodeRadius * 0.1), Math.max(3, nodeRadius * 0.09)]);
-        context.beginPath();
-        context.ellipse(position.x, position.y, nodeRadius * 1.03, nodeRadius * 0.82, index % 2 ? -0.025 : 0.025, 0, Math.PI * 2);
-        context.stroke();
-        context.setLineDash([]);
-        context.restore();
-
-        if (feltLevelImages) {
-          const feltLevelImage = isComplete
-            ? feltLevelImages.complete
-            : isCurrent
-              ? feltLevelImages.current
-              : feltLevelImages.locked;
-          const feltLevelSize = nodeRadius * 3.05;
-          context.drawImage(
-            feltLevelImage,
-            position.x - feltLevelSize / 2,
-            position.y - feltLevelSize / 2,
-            feltLevelSize,
-            feltLevelSize,
-          );
-        }
-
-        context.fillStyle = "rgba(255,248,232,.88)";
-        context.beginPath();
-        context.ellipse(position.x, position.y - 2, nodeRadius * 0.46, nodeRadius * 0.42, index % 2 ? 0.08 : -0.08, 0, Math.PI * 2);
+        context.ellipse(position.x, position.y, nodeRadius * 1.22, nodeRadius, 0, 0, Math.PI * 2);
         context.fill();
 
-        context.fillStyle = isComplete ? "#3f715d" : isCurrent ? "#8b493c" : "#806d5d";
-        context.font = `900 ${Math.max(17, nodeRadius * 0.68)}px Georgia, 'Noto Sans TC', serif`;
+        context.fillStyle = isComplete || isCurrent ? "#ffffff" : "#77717e";
+        context.font = `900 ${Math.max(18, nodeRadius * 0.78)}px Georgia, 'Noto Sans TC', serif`;
         context.textAlign = "center";
         context.textBaseline = "middle";
         context.fillText(isComplete ? "✓" : nodeMotifs[index % nodeMotifs.length], position.x, position.y - 2);
 
-        context.fillStyle = "#fff9e9";
-        roundedRect(context, position.x - nodeRadius * 0.54, position.y + nodeRadius * 0.66, nodeRadius * 1.08, Math.max(20, nodeRadius * 0.48), 9);
+        context.fillStyle = "#ffffff";
+        roundedRect(context, position.x - nodeRadius * 0.54, position.y + nodeRadius * 0.66, nodeRadius * 1.08, Math.max(20, nodeRadius * 0.48), 12);
         context.fill();
-        context.strokeStyle = "rgba(100,73,53,.35)";
-        context.lineWidth = 1.5;
-        context.setLineDash([3, 3]);
-        context.stroke();
-        context.setLineDash([]);
-        context.fillStyle = isCurrent ? "#a94334" : isComplete ? "#3f715d" : "#6f5f53";
+        context.fillStyle = isCurrent ? "#e95634" : isComplete ? "#408f7d" : "#6f6a7c";
         context.font = `900 ${Math.max(10, nodeRadius * 0.25)}px Nunito, sans-serif`;
         context.fillText(String(index + 1).padStart(2, "0"), position.x, position.y + nodeRadius * 0.91);
 
-        const labelTop = position.y + nodeRadius + 14;
-        const labelWidth = Math.max(74, cellWidth - 18);
-        const labelHeight = topicFontSize * 2.75;
-        context.fillStyle = "rgba(255,250,237,.94)";
-        roundedRect(context, position.x - labelWidth / 2, labelTop, labelWidth, labelHeight, 12);
-        context.fill();
-        context.strokeStyle = "rgba(181,151,125,.58)";
-        context.lineWidth = 1.5;
-        context.stroke();
-
-        context.fillStyle = isCurrent ? "#a94334" : isComplete ? "#3f715d" : "#4d4038";
+        context.fillStyle = isCurrent ? "#e95634" : isComplete ? "#408f7d" : "#27233a";
         context.font = `800 ${topicFontSize}px 'Noto Sans TC', sans-serif`;
         context.textBaseline = "top";
-        drawWrappedText(context, topics[index].title, position.x, labelTop + 7, labelWidth - 14, topicFontSize * 1.28);
+        drawWrappedText(context, topics[index].title, position.x, position.y + nodeRadius + 20, cellWidth - 20, topicFontSize * 1.28);
       });
 
       try {
