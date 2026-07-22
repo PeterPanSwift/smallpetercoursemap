@@ -244,7 +244,8 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
   width: 104px;
 }
 .course-node:hover { transform: translateY(-4px); }
-.current .course-node { background: linear-gradient(145deg, #ff9173, var(--coral)); box-shadow: 0 11px 0 var(--coral-dark), 0 19px 28px rgba(233, 86, 52, .22); }
+.current .course-node { background: linear-gradient(145deg, #ff9173, var(--coral)); box-shadow: 0 11px 0 var(--coral-dark), 0 19px 28px rgba(233, 86, 52, .22); transform: scale(1.16); }
+.current .course-node:hover { transform: translateY(-3px) scale(1.16); }
 .complete .course-node { background: linear-gradient(145deg, #9fe1d2, var(--mint)); box-shadow: 0 11px 0 #5ba998, 0 19px 28px rgba(91, 169, 152, .2); }
 .node-motif { color: #85808c; font-family: Georgia, "Times New Roman", serif; font-size: 31px; font-weight: 900; line-height: 1; text-shadow: 0 2px 0 rgba(255, 255, 255, .65); }
 .current .node-motif, .complete .node-motif { color: white; font-size: 32px; text-shadow: 0 2px 0 rgba(94, 54, 67, .18); }
@@ -258,8 +259,8 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
 .label-right .topic-label { left: 126px; text-align: left; }
 .label-left .topic-label { right: 126px; text-align: right; }
 .topic-label small { color: #99929e; display: block; font-size: 10px; font-weight: 700; margin-bottom: 4px; }
-.topic-label strong { display: block; font-size: 16px; line-height: 1.35; }
-.current .topic-label strong { color: var(--coral-dark); }
+.topic-label strong { display: block; font-size: 16px; line-height: 1.35; transition: color .25s ease, font-size .25s ease; }
+.current .topic-label strong { color: var(--coral-dark); font-size: 21px; font-weight: 900; }
 .complete .topic-label strong { color: #4c9e8c; }
 .trail-segment {
   border-top: 5px dotted #ddd5d0;
@@ -407,6 +408,7 @@ footer p { color: #bcb7c9; font-size: 13px; margin: 5px 0 0; }
   .topic-label { top: 90px; width: 155px; }
   .label-left .topic-label, .label-right .topic-label { left: 50%; right: auto; text-align: center; transform: translateX(-50%); }
   .topic-label strong { font-size: 13px; }
+  .current .topic-label strong { font-size: 17px; }
   .trail-segment { top: 54px; }
   .traveling-fox img { height: 72px; width: 72px; }
   .finish-card { margin-left: 16px; margin-right: 16px; }
