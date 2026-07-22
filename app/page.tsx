@@ -554,6 +554,12 @@ export default function Home() {
       canvas.height = dimensions.height;
       const context = canvas.getContext("2d");
       if (!context) throw new Error(t.cannotCreateImage);
+      let feltTexture: HTMLImageElement | null = null;
+      try {
+        feltTexture = await loadCanvasImage("/felt-wool-texture.png", t.imageLoadFailed);
+      } catch {
+        // The map remains exportable with the drawn fiber fallback.
+      }
 
       const { width, height } = dimensions;
       context.fillStyle = "#fffaf2";
@@ -664,6 +670,32 @@ export default function Home() {
         context.ellipse(position.x, position.y, nodeRadius * 1.19, nodeRadius * 0.98, index % 2 ? -0.025 : 0.025, 0, Math.PI * 2);
         context.fill();
         context.restore();
+
+        if (feltTexture) {
+          const sourceSize = Math.min(360, feltTexture.naturalWidth, feltTexture.naturalHeight);
+          const sourceRangeX = Math.max(1, feltTexture.naturalWidth - sourceSize);
+          const sourceRangeY = Math.max(1, feltTexture.naturalHeight - sourceSize);
+          const sourceX = (index * 83) % sourceRangeX;
+          const sourceY = (index * 61) % sourceRangeY;
+          context.save();
+          context.beginPath();
+          context.ellipse(position.x, position.y, nodeRadius * 1.18, nodeRadius * 0.97, index % 2 ? -0.025 : 0.025, 0, Math.PI * 2);
+          context.clip();
+          context.globalAlpha = 0.72;
+          context.globalCompositeOperation = "multiply";
+          context.drawImage(
+            feltTexture,
+            sourceX,
+            sourceY,
+            sourceSize,
+            sourceSize,
+            position.x - nodeRadius * 1.2,
+            position.y - nodeRadius,
+            nodeRadius * 2.4,
+            nodeRadius * 2,
+          );
+          context.restore();
+        }
 
         drawFeltFibers(context, position.x, position.y, nodeRadius * 1.17, nodeRadius * 0.95, index + 1);
 

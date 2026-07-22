@@ -227,12 +227,7 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
   --node-tilt: -1.4deg;
   align-items: center;
   background-color: #d9c9b7;
-  background-image:
-    radial-gradient(circle at 17% 24%, rgba(255,255,255,.4) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 74% 61%, rgba(102,74,55,.13) 0 1.2px, transparent 2px),
-    radial-gradient(circle at 44% 82%, rgba(255,255,255,.3) 0 1px, transparent 1.8px),
-    linear-gradient(145deg, rgba(255,255,255,.26), rgba(118,84,62,.08));
-  background-size: 13px 15px, 17px 19px, 21px 18px, auto;
+  background-image: linear-gradient(145deg, rgba(255,255,255,.5), rgba(118,84,62,.13));
   border: 3px solid #bda78f;
   border-radius: 47% 53% 45% 55% / 54% 43% 57% 46%;
   box-shadow:
@@ -254,10 +249,7 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
 .course-node:hover { transform: translateY(-4px) rotate(calc(var(--node-tilt) * -1)); }
 .current .course-node {
   background-color: #df775b;
-  background-image:
-    radial-gradient(circle at 18% 25%, rgba(255,238,225,.55) 0 1px, transparent 1.9px),
-    radial-gradient(circle at 73% 64%, rgba(112,43,32,.18) 0 1.2px, transparent 2px),
-    linear-gradient(145deg, #ef9a7d, #d8624a);
+  background-image: linear-gradient(145deg, rgba(255,215,198,.46), rgba(133,48,34,.25));
   border-color: #bd503e;
   box-shadow: 0 11px 0 #a94334, 0 21px 30px rgba(154, 67, 47, .27), inset 7px 8px 14px rgba(255,255,255,.24), inset -8px -7px 13px rgba(105,39,29,.14);
   transform: rotate(var(--node-tilt)) scale(1.16);
@@ -265,10 +257,7 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
 .current .course-node:hover { transform: translateY(-3px) rotate(calc(var(--node-tilt) * -1)) scale(1.16); }
 .complete .course-node {
   background-color: #82b7a0;
-  background-image:
-    radial-gradient(circle at 21% 29%, rgba(236,255,247,.55) 0 1px, transparent 1.9px),
-    radial-gradient(circle at 71% 67%, rgba(47,96,77,.17) 0 1.2px, transparent 2px),
-    linear-gradient(145deg, #a8d2bf, #74a990);
+  background-image: linear-gradient(145deg, rgba(226,250,236,.47), rgba(45,91,72,.22));
   border-color: #5f907a;
   box-shadow: 0 10px 0 #4f7867, 0 18px 28px rgba(64, 111, 91, .24), inset 7px 8px 14px rgba(255,255,255,.25), inset -8px -7px 13px rgba(43,86,67,.13);
 }
@@ -300,22 +289,27 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
   inset: 7px;
   pointer-events: none;
   position: absolute;
+  z-index: 1;
 }
 .course-node::after {
-  background-image: repeating-linear-gradient(17deg, transparent 0 7px, rgba(255,255,255,.12) 8px, transparent 9px 14px);
+  background-image: url("/felt-wool-texture.png");
+  background-position: center;
+  background-size: 150px 150px;
   border-radius: inherit;
   content: "";
   inset: 2px;
-  opacity: .8;
+  mix-blend-mode: multiply;
+  opacity: .72;
   pointer-events: none;
   position: absolute;
+  z-index: 0;
 }
 .current .course-node::before { border-color: rgba(105, 39, 29, .42); }
 .complete .course-node::before { border-color: rgba(42, 86, 66, .4); }
 .node-number { background: #fff9e9; border: 1px dashed rgba(100,73,53,.35); border-radius: 9px 11px 8px 10px; bottom: -8px; box-shadow: 0 2px 4px rgba(77,55,39,.12); color: var(--muted); font-family: var(--font-nunito); font-size: 9px; font-weight: 900; left: 50%; padding: 3px 8px; position: absolute; transform: translateX(-50%) rotate(-1deg); z-index: 4; }
 .current .node-number { color: var(--coral-dark); }
 .complete .node-number { color: #408f7d; }
-.topic-label { background: rgba(255, 250, 237, .88); border: 1px solid rgba(181, 151, 125, .55); border-radius: 13px 17px 12px 16px; box-shadow: 0 5px 13px rgba(83,57,40,.1); padding: 10px 13px; position: absolute; top: -2px; width: 210px; }
+.topic-label { background-color: rgba(255, 250, 237, .93); background-image: linear-gradient(rgba(255,250,237,.72), rgba(255,250,237,.72)), url("/felt-wool-texture.png"); background-blend-mode: normal, multiply; background-size: auto, 210px 210px; border: 1px solid rgba(181, 151, 125, .55); border-radius: 13px 17px 12px 16px; box-shadow: 0 5px 13px rgba(83,57,40,.1); padding: 10px 13px; position: absolute; top: -2px; width: 210px; }
 .label-right .topic-label { left: 126px; text-align: left; }
 .label-left .topic-label { right: 126px; text-align: right; }
 .topic-label small { color: #99929e; display: block; font-size: 10px; font-weight: 700; margin-bottom: 4px; }
