@@ -476,10 +476,6 @@ export default function Home() {
       context.fillStyle = "#8175d8";
       context.font = "900 18px Nunito, 'Noto Sans TC', sans-serif";
       context.fillText(`✦  每一步都算數，和${characterName}一起走到終點！`, surfaceX + 48, surfaceY + surfaceHeight - 42);
-      context.textAlign = "right";
-      context.fillStyle = "#6f6a7c";
-      context.font = "700 16px Nunito, 'Noto Sans TC', sans-serif";
-      context.fillText(`投影片比例 ${ratio}`, surfaceX + surfaceWidth - 48, surfaceY + surfaceHeight - 42);
 
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((result) => result ? resolve(result) : reject(new Error("圖片輸出失敗")), "image/png");
@@ -519,7 +515,10 @@ export default function Home() {
             <strong>{progress}%</strong>
           </div>
           <button className="edit-button" type="button" onClick={openEditor}>
-            <span aria-hidden="true">✎</span> 編輯課程
+            <span aria-hidden="true">✎</span> 編輯關卡
+          </button>
+          <button className="header-export-button" type="button" onClick={() => { setExportError(""); setIsExportOpen(true); }}>
+            <span aria-hidden="true">⇩</span> 輸出圖片
           </button>
         </div>
       </header>
@@ -536,7 +535,7 @@ export default function Home() {
             <a className="text-link" href="#course-map">看看課程地圖 <span aria-hidden="true">↓</span></a>
           </div>
           <div className="mini-stats">
-            <span><strong>自由編輯課程關卡</strong></span>
+            <span><strong>自由編輯角色關卡</strong></span>
           </div>
         </div>
         <div className="hero-visual" aria-label={`學習夥伴${characterName}`}>
@@ -563,10 +562,6 @@ export default function Home() {
             <div>
               <span className="chapter-label">CURRENT COURSE</span>
               <strong>{courseTitle}</strong>
-            </div>
-            <div className="map-actions">
-              <button type="button" className="small-export" onClick={() => { setExportError(""); setIsExportOpen(true); }}>⇩ 輸出圖片</button>
-              <button type="button" className="small-edit" onClick={openEditor}>⚙ 管理課程</button>
             </div>
           </div>
 

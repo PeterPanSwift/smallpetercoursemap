@@ -76,7 +76,7 @@ button { color: inherit; }
 .brand small { color: var(--muted); font-size: 10px; margin-top: 2px; }
 
 .header-actions { align-items: center; display: flex; gap: 12px; }
-.progress-pill, .edit-button {
+.progress-pill, .edit-button, .header-export-button {
   align-items: center;
   background: white;
   border: 1px solid var(--line);
@@ -87,9 +87,11 @@ button { color: inherit; }
   padding: 0 17px;
 }
 .progress-pill strong { color: var(--coral-dark); font-family: var(--font-nunito); }
-.edit-button { cursor: pointer; font-size: 13px; font-weight: 800; transition: .2s ease; }
-.edit-button:hover { border-color: var(--coral); box-shadow: 0 5px 18px rgba(233, 86, 52, .12); transform: translateY(-2px); }
+.edit-button, .header-export-button { cursor: pointer; font-size: 13px; font-weight: 800; transition: .2s ease; white-space: nowrap; }
+.edit-button:hover, .header-export-button:hover { border-color: var(--coral); box-shadow: 0 5px 18px rgba(233, 86, 52, .12); transform: translateY(-2px); }
 .edit-button span { color: var(--coral); font-size: 18px; }
+.header-export-button { background: var(--lavender-light); border-color: transparent; color: var(--lavender); }
+.header-export-button span { font-size: 17px; }
 
 .hero {
   align-items: center;
@@ -219,11 +221,6 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
 .map-toolbar > div { display: flex; flex-direction: column; gap: 4px; }
 .map-toolbar strong { font-size: 16px; }
 .chapter-label { color: var(--coral); font-family: var(--font-nunito); font-size: 10px; font-weight: 900; letter-spacing: .12em; }
-.small-edit { background: white; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font-size: 12px; font-weight: 800; padding: 9px 14px; }
-.small-edit:hover { border-color: var(--coral); }
-.map-toolbar .map-actions { align-items: center; display: flex; flex-direction: row; gap: 8px; }
-.small-export { background: var(--lavender-light); border: 1px solid transparent; border-radius: 999px; color: var(--lavender); cursor: pointer; font-size: 12px; font-weight: 800; padding: 9px 14px; transition: .18s ease; }
-.small-export:hover { border-color: #cec5ff; box-shadow: 0 5px 16px rgba(129, 117, 216, .16); transform: translateY(-1px); }
 
 .map-area { min-height: 900px; overflow: hidden; padding: 150px 0 70px; position: relative; }
 .course-path { list-style: none; margin: 0; padding: 0; position: relative; z-index: 2; }
@@ -399,9 +396,10 @@ footer p { color: #bcb7c9; font-size: 13px; margin: 5px 0 0; }
 
 @media (max-width: 640px) {
   .site-header { height: 76px; padding: 0 16px; }
-  .brand small, .progress-pill { display: none; }
+  .brand > span:last-child, .progress-pill { display: none; }
   .brand-mark { height: 41px; width: 41px; }
-  .edit-button { height: 42px; padding: 0 14px; }
+  .header-actions { gap: 6px; }
+  .edit-button, .header-export-button { font-size: 12px; gap: 5px; height: 42px; padding: 0 10px; }
   .hero { min-height: auto; padding: 54px 20px 70px; }
   h1 { font-size: 43px; }
   .hero-description { font-size: 15px; }
@@ -413,8 +411,6 @@ footer p { color: #bcb7c9; font-size: 13px; margin: 5px 0 0; }
   .map-shell { border-radius: 24px; }
   .map-toolbar { align-items: flex-start; gap: 14px; padding: 19px; }
   .map-toolbar strong { font-size: 13px; }
-  .map-toolbar .map-actions { align-items: flex-end; flex-direction: column; }
-  .small-edit, .small-export { white-space: nowrap; }
   .map-area { padding-top: 140px; }
   .course-row { height: 190px; }
   .course-node { height: 72px; width: 90px; }
