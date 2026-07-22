@@ -555,10 +555,21 @@ export default function Home() {
       const context = canvas.getContext("2d");
       if (!context) throw new Error(t.cannotCreateImage);
       let feltTexture: HTMLImageElement | null = null;
+      let feltLevelImages: { locked: HTMLImageElement; current: HTMLImageElement; complete: HTMLImageElement } | null = null;
       try {
         feltTexture = await loadCanvasImage("/felt-wool-texture.png", t.imageLoadFailed);
       } catch {
         // The map remains exportable with the drawn fiber fallback.
+      }
+      try {
+        const [locked, current, complete] = await Promise.all([
+          loadCanvasImage("/felt-level-locked.png", t.imageLoadFailed),
+          loadCanvasImage("/felt-level-current.png", t.imageLoadFailed),
+          loadCanvasImage("/felt-level-complete.png", t.imageLoadFailed),
+        ]);
+        feltLevelImages = { locked, current, complete };
+      } catch {
+        // The drawn felt nodes remain available if a photographic asset is unavailable.
       }
 
       const { width, height } = dimensions;
@@ -708,6 +719,22 @@ export default function Home() {
         context.stroke();
         context.setLineDash([]);
         context.restore();
+
+        if (feltLevelImages) {
+          const feltLevelImage = isComplete
+            ? feltLevelImages.complete
+            : isCurrent
+              ? feltLevelImages.current
+              : feltLevelImages.locked;
+          const feltLevelSize = nodeRadius * 3.05;
+          context.drawImage(
+            feltLevelImage,
+            position.x - feltLevelSize / 2,
+            position.y - feltLevelSize / 2,
+            feltLevelSize,
+            feltLevelSize,
+          );
+        }
 
         context.fillStyle = "rgba(255,248,232,.88)";
         context.beginPath();

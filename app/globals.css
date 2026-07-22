@@ -226,40 +226,36 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
 .course-node {
   --node-tilt: -1.4deg;
   align-items: center;
-  background-color: #d9c9b7;
-  background-image: linear-gradient(145deg, rgba(255,255,255,.5), rgba(118,84,62,.13));
-  border: 3px solid #bda78f;
-  border-radius: 47% 53% 45% 55% / 54% 43% 57% 46%;
-  box-shadow:
-    0 10px 0 #9e826b,
-    0 17px 25px rgba(83, 57, 40, .22),
-    inset 7px 8px 14px rgba(255,255,255,.3),
-    inset -8px -7px 13px rgba(100,70,50,.13);
+  background-color: transparent;
+  background-image: url("/felt-level-locked.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 148% 148%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   cursor: pointer;
   display: flex;
-  height: 82px;
+  filter: drop-shadow(0 11px 8px rgba(83, 57, 40, .22));
+  height: 96px;
   justify-content: center;
   position: relative;
   transform: rotate(var(--node-tilt));
   transition: .22s cubic-bezier(.2, .8, .3, 1.25);
-  width: 104px;
+  width: 118px;
 }
-.course-row:nth-child(3n + 2) .course-node { --node-tilt: 1.7deg; border-radius: 53% 47% 56% 44% / 45% 55% 46% 54%; }
-.course-row:nth-child(3n) .course-node { --node-tilt: -.4deg; border-radius: 44% 56% 48% 52% / 57% 46% 54% 43%; }
+.course-row:nth-child(3n + 2) .course-node { --node-tilt: 1.7deg; }
+.course-row:nth-child(3n) .course-node { --node-tilt: -.4deg; }
 .course-node:hover { transform: translateY(-4px) rotate(calc(var(--node-tilt) * -1)); }
 .current .course-node {
-  background-color: #df775b;
-  background-image: linear-gradient(145deg, rgba(255,215,198,.46), rgba(133,48,34,.25));
-  border-color: #bd503e;
-  box-shadow: 0 11px 0 #a94334, 0 21px 30px rgba(154, 67, 47, .27), inset 7px 8px 14px rgba(255,255,255,.24), inset -8px -7px 13px rgba(105,39,29,.14);
+  background-image: url("/felt-level-current.png");
+  filter: drop-shadow(0 13px 10px rgba(154, 67, 47, .3));
   transform: rotate(var(--node-tilt)) scale(1.16);
 }
 .current .course-node:hover { transform: translateY(-3px) rotate(calc(var(--node-tilt) * -1)) scale(1.16); }
 .complete .course-node {
-  background-color: #82b7a0;
-  background-image: linear-gradient(145deg, rgba(226,250,236,.47), rgba(45,91,72,.22));
-  border-color: #5f907a;
-  box-shadow: 0 10px 0 #4f7867, 0 18px 28px rgba(64, 111, 91, .24), inset 7px 8px 14px rgba(255,255,255,.25), inset -8px -7px 13px rgba(43,86,67,.13);
+  background-image: url("/felt-level-complete.png");
+  filter: drop-shadow(0 12px 9px rgba(64, 111, 91, .26));
 }
 .node-motif {
   align-items: center;
@@ -282,30 +278,7 @@ h1 em::after { background: var(--yellow); border-radius: 999px; bottom: 2px; con
 }
 .current .node-motif, .complete .node-motif { background: rgba(255,248,232,.88); color: #8b493c; font-size: 27px; text-shadow: 0 1px 0 white; }
 .complete .node-motif { color: #3f715d; }
-.course-node::before {
-  border: 2px dashed rgba(91, 64, 46, .33);
-  border-radius: inherit;
-  content: "";
-  inset: 7px;
-  pointer-events: none;
-  position: absolute;
-  z-index: 1;
-}
-.course-node::after {
-  background-image: url("/felt-wool-texture.png");
-  background-position: center;
-  background-size: 150px 150px;
-  border-radius: inherit;
-  content: "";
-  inset: 2px;
-  mix-blend-mode: multiply;
-  opacity: .72;
-  pointer-events: none;
-  position: absolute;
-  z-index: 0;
-}
-.current .course-node::before { border-color: rgba(105, 39, 29, .42); }
-.complete .course-node::before { border-color: rgba(42, 86, 66, .4); }
+.course-node::before, .course-node::after { content: none; }
 .node-number { background: #fff9e9; border: 1px dashed rgba(100,73,53,.35); border-radius: 9px 11px 8px 10px; bottom: -8px; box-shadow: 0 2px 4px rgba(77,55,39,.12); color: var(--muted); font-family: var(--font-nunito); font-size: 9px; font-weight: 900; left: 50%; padding: 3px 8px; position: absolute; transform: translateX(-50%) rotate(-1deg); z-index: 4; }
 .current .node-number { color: var(--coral-dark); }
 .complete .node-number { color: #408f7d; }
@@ -471,7 +444,7 @@ footer p { color: #bcb7c9; font-size: 13px; margin: 5px 0 0; }
   .map-toolbar strong { font-size: 13px; }
   .map-area { padding-top: 140px; }
   .course-row { height: 190px; }
-  .course-node { height: 72px; width: 90px; }
+  .course-node { height: 86px; width: 104px; }
   .topic-label { top: 90px; width: 155px; }
   .label-left .topic-label, .label-right .topic-label { left: 50%; right: auto; text-align: center; transform: translateX(-50%); }
   .topic-label strong { font-size: 13px; }
