@@ -100,7 +100,7 @@ export default function Home() {
   const [draftTopics, setDraftTopics] = useState<Topic[]>(defaultTopics);
   const [draftCourseTitle, setDraftCourseTitle] = useState(defaultCourseTitle);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
+  const [journeyTarget, setJourneyTarget] = useState<number | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isExporting, setIsExporting] = useState<ExportRatio | null>(null);
@@ -111,6 +111,7 @@ export default function Home() {
   const [foxPosition, setFoxPosition] = useState({ x: 0, y: 0, ready: false });
   const mapRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const isRunning = journeyTarget !== null;
 
   useEffect(() => {
     try {
@@ -159,16 +160,16 @@ export default function Home() {
   }, [topics, updateFoxPosition]);
 
   useEffect(() => {
-    if (!isRunning) return;
-    if (currentIndex >= topics.length - 1) {
-      setIsRunning(false);
+    if (journeyTarget === null) return;
+    if (currentIndex === journeyTarget) {
+      setJourneyTarget(null);
       return;
     }
     const timer = window.setTimeout(() => {
-      setCurrentIndex((index) => Math.min(index + 1, topics.length - 1));
+      setCurrentIndex((index) => index + Math.sign(journeyTarget - index));
     }, 900);
     return () => window.clearTimeout(timer);
-  }, [currentIndex, isRunning, topics.length]);
+  }, [currentIndex, journeyTarget]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -187,7 +188,7 @@ export default function Home() {
 
   function beginJourney() {
     setCurrentIndex(0);
-    setIsRunning(true);
+    setJourneyTarget(topics.length - 1);
   }
 
   function openEditor() {
@@ -240,7 +241,7 @@ export default function Home() {
     setTopics(cleaned);
     setCourseTitle(draftCourseTitle.trim() || "我的學習冒險");
     setCurrentIndex(0);
-    setIsRunning(false);
+    setJourneyTarget(null);
     setIsEditorOpen(false);
   }
 
@@ -485,7 +486,7 @@ export default function Home() {
         <div className="section-heading">
           <p className="eyebrow"><span>LEARNING MAP</span> 你的專屬學習路線</p>
           <h2>今天想走到哪一關？</h2>
-          <p>點一下任一關卡可以讓小彼直接跳過去，或從第一關開始完整播放。</p>
+          <p>點一下任一關卡，小彼會沿著路線逐關前進；也可以從第一關開始完整播放。</p>
         </div>
 
         <div className="map-shell">
@@ -542,7 +543,7 @@ export default function Home() {
                         className="course-node"
                         type="button"
                         ref={(element) => { nodeRefs.current[index] = element; }}
-                        onClick={() => { setIsRunning(false); setCurrentIndex(index); }}
+                        onClick={() => setJourneyTarget(index)}
                         aria-label={`第 ${index + 1} 關：${topic.title}`}
                       >
                         <span className="node-motif">{state === "complete" ? "✓" : nodeMotifs[index % nodeMotifs.length]}</span>
