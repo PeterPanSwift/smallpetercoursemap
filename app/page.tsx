@@ -515,7 +515,7 @@ export default function Home() {
             <strong>{progress}%</strong>
           </div>
           <button className="edit-button" type="button" onClick={openEditor}>
-            <span aria-hidden="true">✎</span> 編輯關卡
+            <span aria-hidden="true">✎</span> 編輯角色關卡
           </button>
           <button className="header-export-button" type="button" onClick={() => { setExportError(""); setIsExportOpen(true); }}>
             <span aria-hidden="true">⇩</span> 輸出圖片
