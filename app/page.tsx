@@ -170,6 +170,21 @@ export default function Home() {
     return () => window.clearTimeout(timer);
   }, [currentIndex, isRunning, topics.length]);
 
+  useEffect(() => {
+    if (!isRunning) return;
+    const frame = window.requestAnimationFrame(() => {
+      const node = nodeRefs.current[currentIndex];
+      if (!node) return;
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      node.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [currentIndex, isRunning]);
+
   function beginJourney() {
     setCurrentIndex(0);
     setIsRunning(true);
@@ -368,9 +383,9 @@ export default function Home() {
         const foxImage = await loadCanvasImage("/fox.jpg");
         const currentPosition = positions[Math.min(currentIndex, positions.length - 1)];
         if (currentPosition) {
-          const foxSize = Math.max(48, nodeRadius * 1.55);
-          const foxX = currentPosition.x + nodeRadius * 0.9;
-          const foxY = currentPosition.y - nodeRadius * 1.35;
+          const foxSize = Math.max(80, nodeRadius * 2.05);
+          const foxX = currentPosition.x + nodeRadius * 1.08;
+          const foxY = currentPosition.y - nodeRadius * 1.55;
           context.save();
           context.fillStyle = "#ffffff";
           context.beginPath();
@@ -451,8 +466,7 @@ export default function Home() {
             <a className="text-link" href="#course-map">看看課程地圖 <span aria-hidden="true">↓</span></a>
           </div>
           <div className="mini-stats">
-            <span><strong>{topics.length}</strong> 個冒險關卡</span>
-            <span><strong>100%</strong> 可自由編輯</span>
+            <span><strong>自由編輯課程關卡</strong></span>
           </div>
         </div>
         <div className="hero-visual" aria-label="狐狸學習夥伴小彼">
