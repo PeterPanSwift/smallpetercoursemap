@@ -11,7 +11,7 @@ type Topic = {
 type ExportRatio = "4:3" | "16:9";
 type Locale = "zh" | "en";
 
-const defaultTopicsZh: Topic[] = [
+const legacyDefaultTopicsZh: Topic[] = [
   { id: "swiftui-intro", title: "SwiftUI 初相見" },
   { id: "views-modifiers", title: "View 與修飾器" },
   { id: "stacks-layout", title: "Stacks 組合術" },
@@ -24,7 +24,7 @@ const defaultTopicsZh: Topic[] = [
   { id: "portfolio", title: "我的 SwiftUI 作品" },
 ];
 
-const defaultTopicsEn: Topic[] = [
+const legacyDefaultTopicsEn: Topic[] = [
   { id: "swiftui-intro", title: "Meet SwiftUI" },
   { id: "views-modifiers", title: "Views and Modifiers" },
   { id: "stacks-layout", title: "Building with Stacks" },
@@ -37,10 +37,62 @@ const defaultTopicsEn: Topic[] = [
   { id: "portfolio", title: "My SwiftUI Project" },
 ];
 
+const defaultTopicsZh: Topic[] = [
+  { id: "xcode", title: "開發 App 的 Xcode" },
+  { id: "ai-assisted-development", title: "使用 AI 輔助 App 開發" },
+  { id: "swift-6", title: "程式語言 Swift 6" },
+  { id: "app-interface", title: "製作 App 畫面" },
+  { id: "navigation", title: "頁面切換(navigation)" },
+  { id: "data-flow", title: "資料管理(data flow)" },
+  { id: "animation", title: "動畫(animation)" },
+  { id: "data-input", title: "資料輸入。" },
+  { id: "swift-concurrency-api", title: "使用 Swift Concurrency 串接網路 API" },
+  { id: "spm", title: "管理套件的 SPM" },
+  { id: "swiftdata", title: "儲存資料的 SwiftData" },
+  { id: "swift-charts", title: "製作圖表的 Swift Charts" },
+  { id: "tipkit", title: "顯示 App 提示說明的 TipKit" },
+  { id: "widgetkit", title: "桌面小工具 WidgetKit" },
+  { id: "foundation-models", title: "串接本地 AI 的 FoundationModels" },
+  { id: "swiftui-uikit", title: "SwiftUI & UIKit 的串接" },
+  { id: "app-store", title: "上架 App Store" },
+];
+
+const defaultTopicsEn: Topic[] = [
+  { id: "xcode", title: "Developing Apps with Xcode" },
+  { id: "ai-assisted-development", title: "AI-Assisted App Development" },
+  { id: "swift-6", title: "Swift 6 Programming Language" },
+  { id: "app-interface", title: "Building App Interfaces" },
+  { id: "navigation", title: "Page Navigation" },
+  { id: "data-flow", title: "Data Management (Data Flow)" },
+  { id: "animation", title: "Animation" },
+  { id: "data-input", title: "Data Input" },
+  { id: "swift-concurrency-api", title: "Networking APIs with Swift Concurrency" },
+  { id: "spm", title: "Package Management with SPM" },
+  { id: "swiftdata", title: "Data Persistence with SwiftData" },
+  { id: "swift-charts", title: "Charts with Swift Charts" },
+  { id: "tipkit", title: "App Tips with TipKit" },
+  { id: "widgetkit", title: "Home Screen Widgets with WidgetKit" },
+  { id: "foundation-models", title: "On-Device AI with Foundation Models" },
+  { id: "swiftui-uikit", title: "SwiftUI & UIKit Integration" },
+  { id: "app-store", title: "Publishing to the App Store" },
+];
+
 const localizedDefaults = {
-  zh: { topics: defaultTopicsZh, courseTitle: "SwiftUI 入門冒險", characterName: "小彼" },
-  en: { topics: defaultTopicsEn, courseTitle: "SwiftUI Starter Adventure", characterName: "Little Peter" },
+  zh: { topics: defaultTopicsZh, courseTitle: "iOS SwiftUI App 程式設計入門", characterName: "小彼" },
+  en: { topics: defaultTopicsEn, courseTitle: "Introduction to iOS SwiftUI App Development", characterName: "Little Peter" },
 } satisfies Record<Locale, { topics: Topic[]; courseTitle: string; characterName: string }>;
+
+function isLegacyDefaultCourse(topics: Topic[], courseTitle: string | null) {
+  const legacyDefaults = [
+    { topics: legacyDefaultTopicsZh, courseTitle: "SwiftUI 入門冒險" },
+    { topics: legacyDefaultTopicsEn, courseTitle: "SwiftUI Starter Adventure" },
+  ];
+  return legacyDefaults.some((legacy) =>
+    courseTitle?.trim() === legacy.courseTitle
+    && topics.length === legacy.topics.length
+    && topics.every((topic, index) => topic.title === legacy.topics[index].title),
+  );
+}
 
 const defaultCharacterImage = "/fox.jpg";
 
@@ -103,7 +155,7 @@ const translations = {
     bulkSummaryBefore: "目前會建立",
     bulkSummaryAfter: "個關卡",
     applyBulk: "套用並切回逐項編輯 →",
-    resetTen: "還原預設 10 關",
+    resetDefault: "還原預設 17 關",
     cancel: "取消",
     save: "儲存並更新地圖",
     exportTitle: "輸出課程地圖",
@@ -186,7 +238,7 @@ const translations = {
     bulkSummaryBefore: "This will create",
     bulkSummaryAfter: "levels",
     applyBulk: "Apply and return to list editing →",
-    resetTen: "Reset to 10 default levels",
+    resetDefault: "Reset to 17 default levels",
     cancel: "Cancel",
     save: "Save and update map",
     exportTitle: "Export Course Map",
@@ -351,6 +403,8 @@ export default function Home() {
     document.title = detectedLocale === "zh"
       ? "彼學島｜和小彼一起探索任何主題"
       : "Peter Learning Island | Explore Any Topic with Little Peter";
+    setTopics(detectedDefaults.topics.map((topic) => ({ ...topic })));
+    setCourseTitle(detectedDefaults.courseTitle);
     try {
       const saved = window.localStorage.getItem("swiftui-course-map-topics");
       const savedTitle = window.localStorage.getItem("course-map-title");
@@ -359,12 +413,15 @@ export default function Home() {
       if (saved) {
         const parsed = JSON.parse(saved) as Topic[];
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setTopics(parsed.filter((topic) => topic?.title?.trim()).map((topic) => ({ id: topic.id, title: topic.title })));
+          const cleanedTopics = parsed
+            .filter((topic) => topic?.title?.trim())
+            .map((topic) => ({ id: topic.id, title: topic.title }));
+          if (!isLegacyDefaultCourse(cleanedTopics, savedTitle)) {
+            setTopics(cleanedTopics);
+            if (savedTitle?.trim()) setCourseTitle(savedTitle.trim());
+          }
         }
-      } else {
-        setTopics(detectedDefaults.topics.map((topic) => ({ ...topic })));
       }
-      setCourseTitle(savedTitle?.trim() || detectedDefaults.courseTitle);
       setCharacterName(savedCharacterName?.trim() || detectedDefaults.characterName);
       if (savedCharacterImage?.startsWith("data:image/")) setCharacterImage(savedCharacterImage);
     } catch {
@@ -932,7 +989,7 @@ export default function Home() {
               </div>
             )}
             <div className="editor-footer">
-              <button className="ghost-button" type="button" onClick={() => { const resetTopics = defaults.topics.map((topic) => ({ ...topic })); setDraftTopics(resetTopics); setDraftCourseTitle(defaults.courseTitle); setBulkText(resetTopics.map((topic) => topic.title).join("\n")); }}>{t.resetTen}</button>
+              <button className="ghost-button" type="button" onClick={() => { const resetTopics = defaults.topics.map((topic) => ({ ...topic })); setDraftTopics(resetTopics); setDraftCourseTitle(defaults.courseTitle); setBulkText(resetTopics.map((topic) => topic.title).join("\n")); }}>{t.resetDefault}</button>
               <div><button className="text-cancel" type="button" onClick={() => setIsEditorOpen(false)}>{t.cancel}</button><button className="primary-button compact" type="button" onClick={saveDraft}>{t.save}</button></div>
             </div>
           </section>
