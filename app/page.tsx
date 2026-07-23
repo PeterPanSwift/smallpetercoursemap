@@ -108,7 +108,7 @@ const translations = {
     heroBefore: "陪著",
     heroEmphasis: "一步一步",
     heroAfter: "完成學習！",
-    heroDescription: (name: string) => `語言、程式、攝影或任何新技能，都能排成專屬路線。準備好後按下出發，看${name}一路走到終點吧。`,
+    heroDescription: (name: string) => `語言、程式、AI 或任何新技能，都能排成專屬路線。準備好後按下出發，看${name}一路走到終點吧。`,
     moving: (name: string) => `${name}前進中…`,
     start: (name: string) => `${name}出發`,
     viewMap: "看看課程地圖",
