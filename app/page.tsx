@@ -58,12 +58,12 @@ const defaultTopicsZh: Topic[] = [
 ];
 
 const defaultTopicsEn: Topic[] = [
-  { id: "xcode", title: "Developing Apps with Xcode" },
+  { id: "xcode", title: "Developing iOS Apps with Xcode" },
   { id: "ai-assisted-development", title: "AI-Assisted App Development" },
-  { id: "swift-6", title: "Swift 6 Programming Language" },
-  { id: "app-interface", title: "Building App Interfaces" },
+  { id: "swift-6", title: "Swift Programming Language" },
+  { id: "app-interface", title: "Building App Interfaces with SwiftUI" },
   { id: "navigation", title: "Page Navigation" },
-  { id: "data-flow", title: "Data Management (Data Flow)" },
+  { id: "data-flow", title: "Data Management" },
   { id: "animation", title: "Animation" },
   { id: "data-input", title: "Data Input" },
   { id: "swift-concurrency-api", title: "Networking APIs with Swift Concurrency" },
